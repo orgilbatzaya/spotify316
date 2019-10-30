@@ -17,6 +17,32 @@ var client_id = 'efa17a8f851d4bea93553ea7e2610eb0'; // Your client id
 var client_secret = '27a6fe62777a4de6855b83f62e1367a0'; // Your secret
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
+// Firebase App (the core Firebase SDK) is always required and
+// must be listed before other Firebase SDKs
+var firebase = require("firebase/app");
+
+// Add the Firebase products that you want to use
+require("firebase/database");
+
+// TODO: Replace the following with your app's Firebase project configuration
+var firebaseConfig = {
+
+  apiKey: "AIzaSyA7n3Skbd9S7vs8Ze4-zUXTG0XdOUOfbeI",
+  authDomain: "spotify316-40ea2.firebaseapp.com",
+  databaseURL: "https://spotify316-40ea2.firebaseio.com",
+  projectId: "spotify316-40ea2",
+  storageBucket: "spotify316-40ea2.appspot.com",
+  messagingSenderId: "1043630421868",
+  appId: "1:1043630421868:web:aeff8a4bd8df01e14f6549",
+  measurementId: "G-8CBFXCHDNE"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Get a reference to the database service
+var database = firebase.database();
+
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
