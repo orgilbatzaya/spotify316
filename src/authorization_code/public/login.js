@@ -35,6 +35,7 @@ $(document).ready(function() {
         if (error) {
           alert('There was an error during the authentication');
         } else {
+            console.log("access token "+access_token);
           if (access_token) {
             // render oauth info
             oauthPlaceholder.innerHTML = oauthTemplate({
@@ -65,7 +66,7 @@ $(document).ready(function() {
                 },
                 success: function(response) {
                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
+                  console.log("logged inn!!");
                   $('#login').hide();
                   $('#loggedin').show();
 
@@ -74,6 +75,7 @@ $(document).ready(function() {
 
           } else {
               // render initial screen
+              console.log("log in failed!!");
               $('#login').show();
               $('#loggedin').hide();
           }

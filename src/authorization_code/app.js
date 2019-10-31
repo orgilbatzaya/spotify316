@@ -13,9 +13,13 @@ var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-var client_id = 'efa17a8f851d4bea93553ea7e2610eb0'; // Your client id
-var client_secret = '27a6fe62777a4de6855b83f62e1367a0'; // Your secret
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+var client_id = 'c78526ebdf26433cbb293f2dc1fa32e6';
+var client_secret = '7a6b0c4952c74b4293813ceb82046092';
+var redirect_uri = 'http://localhost:8888/profile.html';
+//var client_id = 'efa17a8f851d4bea93553ea7e2610eb0'; // Your client id
+//var client_secret = '27a6fe62777a4de6855b83f62e1367a0'; // Your secret
+//var redirect_uri = 'http://localhost:8888/callback/profile.html'; // Your redirect uri
+//var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
@@ -91,8 +95,11 @@ app.get('/callback', function(req, res) {
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
+      console.log("code: "+code);
 
   if (state === null || state !== storedState) {
+            console.log("code: "+code);
+
     res.redirect('/#' +
       querystring.stringify({
         error: 'state_mismatch'
@@ -111,7 +118,6 @@ app.get('/callback', function(req, res) {
       },
       json: true
     };
-
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
