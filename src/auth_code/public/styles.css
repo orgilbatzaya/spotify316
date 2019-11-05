@@ -1,9 +1,23 @@
 #login, #loggedin {
         display: none;
       }
-      .text-overflow {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 500px;
-      }
+
+  .text-overflow {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 500px;
+  }
+
+.navbar-default{
+	background-color: red; /* For browsers that do not support gradients */
+	background-image: linear-gradient(to right, #ffda23 , #ff2323, #FF23C0) !important; /* Standard syntax (must be last) */
+	color: white !important;
+	position: relative;
+    z-index:1;
+}
+
+#full-page-1{
+	background-image: linear-gradient(to right, #ffda23 , #ff2323, #FF23C0) !important; /* Standard syntax (must be last) */
+	color: white;
+}
