@@ -32,16 +32,48 @@
 	  <!-- fullpage plugin docs -->
 	  <link rel="stylesheet" type="text/css" href="../fullpage/fullpage.css" />
 	  <script type="text/javascript" src="../fullpage/fullpage.js"></script>
+	  <script type="text/javascript" src="../fullpage/fullpage.extensions.min.js"></script>
  
   </head>
 
  <body>
 	 <div id="login">
-		 <div id="fullpage">
-			 <div class="section">Some section</div>
-			 <div class="section">Some section</div>
-			 <div class="section">Some section</div>
-			 <div class="section">Some section</div>
+		 
+		<nav id="menu" class="navbar navbar-inverse fixed-top" style="top: 0px">
+		  <div class="container-fluid">
+		  <a class="navbar-brand" href="#firstPage">Logo</a>
+			<ul class="nav navbar-nav navbar-right">
+			  <li data-menuanchor="secondPage"><a href="#secondPage">Features</a></li>
+			  <li data-menuanchor="thirdPage"><a href="#thirdPage">Our Team</a></li>
+			  <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+			</ul>
+		  </div>
+		</nav>	
+		 
+		 <div id="fullpage">			 
+			 <div class="section" id="full-page-1">Some section</div>
+			 <div class="section" id="full-page-2">
+				<div class="container">
+				  <div class="row">
+					<div class="col-sm-4">
+					  <h3>Discover new music</h3>        
+					  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+					  <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+					</div>
+					<div class="col-sm-4">
+					  <h3>Analyze your playlists</h3>
+					  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+					  <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+					</div>
+					<div class="col-sm-4">
+					  <h3>Connect with friends</h3>
+					  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+					  <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+					</div>
+				  </div>
+				</div>				 
+			 </div>
+			 <div class="section" id="full-page-3">Our Team</div>
 		 </div>
 		 
 		 <a href="/login" class="btn btn-primary">Log in with Spotify</a>
@@ -84,26 +116,6 @@
     </ul>
   </div>
 </nav>
-  
-<div class="container">
-  <div class="row">
-    <div class="col-sm-4">
-      <h3>Connect over music</h3>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-    </div>
-    <div class="col-sm-4">
-      <h3>Analyze your music</h3>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-    </div>
-    <div class="col-sm-4">
-      <h3>Discover new music</h3>        
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-    </div>
-  </div>
-</div>
 
 
     <script id="user-profile-template" type="text/x-handlebars-template">
@@ -191,10 +203,12 @@
 			 $('#fullpage').fullpage({
 				 //options here
 				 autoScrolling:true,
-				 scrollHorizontally: true
+				 scrollHorizontally: true,
+				 anchors: ['firstPage', 'secondPage', 'thirdPage'],
+				 menu: '#menu'
 			 });
 			 //methods
-			 $.fn.fullpage.setAllowScrolling(false);
+			 $.fn.fullpage.setAllowScrolling(true);
 		 });
 	 </script>
 	 
