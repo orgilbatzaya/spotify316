@@ -65,7 +65,7 @@ $(document).ready(function() {
                 },
                 success: function(response) {
                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
+                    console.log("log in success");
                   $('#login').hide();
                   $('#loggedin').show();
 
@@ -74,6 +74,7 @@ $(document).ready(function() {
 
           } else {
               // render initial screen
+              console.log("log in failed!");
               $('#login').show();
               $('#loggedin').hide();
           }
