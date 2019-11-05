@@ -25,10 +25,38 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
       
 	<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+	
+	  <!-- Icons -->
+	  <script src="https://kit.fontawesome.com/yourcode.js"></script>
+	  
+	  <!-- fullpage plugin docs -->
+	  <link rel="stylesheet" type="text/css" href="../fullpage/fullpage.css" />
+	  <script type="text/javascript" src="../fullpage/fullpage.js"></script>
  
   </head>
 
-  <body>
+ <body>
+	 <div id="login">
+		 <div id="fullpage">
+			 <div class="section">Some section</div>
+			 <div class="section">Some section</div>
+			 <div class="section">Some section</div>
+			 <div class="section">Some section</div>
+		 </div>
+		 
+		 <a href="/login" class="btn btn-primary">Log in with Spotify</a>
+		 <a href="/login1" class="btn btn-primary">click me</a>
+	 </div>
+	 
+	 <div id="loggedin">
+		 <div class="container">
+			 <div id="user-profile"></div>
+			 <div id="topartists"></div>
+			 <div id="oauth"></div>
+			 <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+		 </div>
+	 </div>
+	 
     <div class="jumbotron text-center">
   <h1>Spotify316</h1>
   <p>Music discovery</p> 
@@ -76,21 +104,7 @@
     </div>
   </div>
 </div>
-    <div class="container">
-      <div id="login">
-        <a href="/login" class="btn btn-primary">Log in with Spotify</a>
-        <a href="/login1" class="btn btn-primary">click me</a>
-      </div>
-      <div id="loggedin">
-        <div id="user-profile">
-        </div>
-        <div id="topartists">
-        </div>
-        <div id="oauth">
-        </div>
-        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
-      </div>
-    </div>
+
 
     <script id="user-profile-template" type="text/x-handlebars-template">
       <h1>Logged in as {{display_name}}</h1>  
@@ -170,7 +184,20 @@
         <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
       </dl>
     </script>
-
+	 
+	 <!-- full page jQeuery plugin -->
+	 <script>
+		 $(document).ready(function() {
+			 $('#fullpage').fullpage({
+				 //options here
+				 autoScrolling:true,
+				 scrollHorizontally: true
+			 });
+			 //methods
+			 $.fn.fullpage.setAllowScrolling(false);
+		 });
+	 </script>
+	 
       <script type="text/javascript" src="login.js"></script>
       <!-- The core Firebase JS SDK is always required and must be listed first -->
       <script src="/__/firebase/7.2.2/firebase-app.js"></script>
