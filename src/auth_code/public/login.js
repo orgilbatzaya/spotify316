@@ -1,5 +1,6 @@
 $(document).ready(function() {
 
+	
         /**
          * Obtains parameters from the hash of the URL
          * @return Object
