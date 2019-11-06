@@ -67,6 +67,7 @@ $(document).ready(function() {
                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
                     console.log("log in success");
                   $('#login').hide();
+				//  $(document).getElementById('fullpage-jquery').disabled = true;
                   $('#loggedin').show();
 
                 }
