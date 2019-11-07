@@ -1,6 +1,6 @@
+
 $(document).ready(function() {
 
-	
         /**
          * Obtains parameters from the hash of the URL
          * @return Object
@@ -14,17 +14,13 @@ $(document).ready(function() {
           }
           return hashParams;
         }
-
-        var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-            userProfileTemplate = Handlebars.compile(userProfileSource),
+        var userProfileTemplate = Handlebars.getTemplate("user-profile-template"),
             userProfilePlaceholder = document.getElementById('user-profile');
 
-        var topArtistsSource = document.getElementById('top-artists-template').innerHTML,
-            topArtistsTemplate = Handlebars.compile(topArtistsSource),
+        var topArtistsTemplate = Handlebars.getTemplate('top-artists-template'),
             topArtistsPlaceholder = document.getElementById('topartists');
 
-        var oauthSource = document.getElementById('oauth-template').innerHTML,
-            oauthTemplate = Handlebars.compile(oauthSource),
+        var oauthTemplate = Handlebars.getTemplate('oauth-template'),
             oauthPlaceholder = document.getElementById('oauth');
 
         var params = getHashParams();
