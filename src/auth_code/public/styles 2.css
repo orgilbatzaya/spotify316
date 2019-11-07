@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+
+*{
+}
+
+body{
+    margin:0px;
+	font-family: 'Montserrat', sans-serif !important;
+}
+
+#login, #loggedin {
+        display: none;
+      }
+
+  .text-overflow {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 500px;
+  }
+
+.navbar{
+    border: 0 !important;
+}
+
+.navbar-default{
+	margin: 0px !important;
+	padding-left: 80px;
+    padding-right: 80px;
+	background-color: red; /* For browsers that do not support gradients */
+	background-image: linear-gradient(to right, #ffda23 , #ff2323, #FF23C0) !important; /* Standard syntax (must be last) */
+	color: white !important;
+	position: relative;
+    z-index:1;
+	border-color: green;
+}
+/*
+.navbar-nav > li > a:hover {
+   background-color:rgba(255, 99, 71, 0.5);
+}
+
+.navbar-nav > li > a:active {
+   background-color:rgba(255, 99, 71, 0.5);
+} */
+
+.navbar-nav > li > a:hover {
+   background-image: linear-gradient(#ff4bcb, #ff4bcb);
+}
+
+.navbar-nav > li > a:active {
+   background-image: linear-gradient(rgba(255,0,0,0), rgba(255,0,0,1));
+}
+
+.navbar-nav > li > a:focus {
+   background-image: linear-gradient(#ab23ff, #ab23ff);
+}
+
+
+#full-page-1{
+	background-image: linear-gradient(to right, #ffda23 , #ff2323, #FF23C0) !important; /* Standard syntax (must be last) */
+	color: white;
+}
+
+.btn-lightred{
+	background-color: #FF6C6C !important;
+	border-color: #FF6C6C !important;
+	color: white;
+}
+
+.profile-img {
+  border-radius: 50%;
+}

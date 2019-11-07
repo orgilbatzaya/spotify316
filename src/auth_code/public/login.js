@@ -1,6 +1,7 @@
 
 $(document).ready(function() {
 
+        
         /**
          * Obtains parameters from the hash of the URL
          * @return Object
@@ -28,7 +29,11 @@ $(document).ready(function() {
         var access_token = params.access_token,
             refresh_token = params.refresh_token,
             error = params.error;
+        
 
+        
+        
+        //topartists
         if (error) {
           alert('There was an error during the authentication');
         } else {
@@ -55,6 +60,11 @@ $(document).ready(function() {
             });
             console.log(access_token);
 
+            // Get a reference to the database service
+
+            
+
+            //getting user information
             $.ajax({
                 url: 'https://api.spotify.com/v1/me',
                 headers: {
@@ -77,6 +87,7 @@ $(document).ready(function() {
               $('#loggedin').hide();
           }
 
+          //refresh token
           document.getElementById('obtain-new-token').addEventListener('click', function() {
             $.ajax({
               url: '/refresh_token',

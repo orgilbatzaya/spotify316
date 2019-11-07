@@ -1,0 +1,6 @@
+{
+  "hosting": {
+    "public": "./authorization_code/public"
+    
+  }
+}
