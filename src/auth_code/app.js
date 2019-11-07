@@ -19,10 +19,14 @@ var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
-var firebase = require("firebase/app");
+var firebase = require("firebase");
 
 // Add the Firebase products that you want to use
-require("firebase/database");
+//require("firebase/database");
+//const firebase = require("firebase");
+// Required for side-effects
+require("firebase/firestore");
+
 
 // TODO: Replace the following with your app's Firebase project configuration
 var firebaseConfig = {
@@ -39,6 +43,20 @@ var firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
+// Get a reference to the database service
+var db = firebase.firestore();
+db.collection("users").add({
+    first: "Ada",
+    last: "Lovelace",
+    born: 1815
+})
+.then(function(docRef) {
+    console.log("Document written with ID: ", docRef.id);
+})
+.catch(function(error) {
+    console.error("Error adding document: ", error);
+});
 
 
 /**
