@@ -23,6 +23,8 @@ var firebase = require("firebase/app");
 
 // Add the Firebase products that you want to use
 require("firebase/database");
+require('firebase/auth');
+require("firebase/firestore");
 
 // TODO: Replace the following with your app's Firebase project configuration
 var firebaseConfig = {
@@ -41,7 +43,11 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 // Get a reference to the database service
-var database = firebase.database();
+var database = firebase.firestore();
+
+// console.log("database");
+// console.log(database);
+
 
 /**
  * Generates a random string containing numbers and letters
@@ -66,6 +72,77 @@ app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
 
+
+
+function getUserData(accessToken) {
+  return fetch(
+    'https://api.spotify.com/v1/me',
+    { 'headers': {'Authorization': 'Bearer ' + accessToken } }
+  );
+}
+
+
+
+function showLoginUI() {
+// Show sign in button
+document.getElementById('signout-button').style.display = "none";
+document.getElementById('loading').style.display = "none";
+document.getElementById('signin-button').style.display = "block";
+}
+
+
+
+function signIn() {
+  // Show loading text
+  document.getElementById('loading').style.display = "block";
+  // Hide buttons
+  document.getElementById('signout-button').style.display = "none";
+  document.getElementById('signin-button').style.display = "none";
+  login()
+    .then(accessToken => getUserData(accessToken))
+    .then(response => response.json())
+    .then(data => {
+      // Call the signup function with the spotify id
+      const signUp = firebase.functions().httpsCallable('signUp');
+      return signUp({user_id: `spotify:${data.id}`})
+    })
+    .then(result => {
+      // Sign in with the token from the function
+      const token = result.data.token;
+      return app.auth().signInWithCustomToken(token)
+    }).then(user => {
+      console.log("Logged in:", user);
+    }).catch(error => {
+      console.error(error);
+    });
+}
+
+
+
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    console.log("Authenticated:", user);
+    // Show sign out button
+    document.getElementById('signout-button').style.display = "block";
+    document.getElementById('signin-button').style.display = "none";
+    document.getElementById('loading').style.display = "none";
+  } else {
+    showLoginUI();
+  }
+});
+
+
+
+function signOut() {
+  firebase.auth().signOut().then(() => {
+    showLoginUI();
+  }).catch((error) => {
+    console.error("Something bad happened");
+  });
+}
+
+
+
 app.get('/login', function(req, res) {
 
   var state = generateRandomString(16);
@@ -83,6 +160,9 @@ app.get('/login', function(req, res) {
     }));
 });
 
+
+
+// respond with function(req, res) when GET request made to /callback endpoint
 app.get('/callback', function(req, res) {
 
   // your application requests refresh and access tokens
@@ -112,21 +192,60 @@ app.get('/callback', function(req, res) {
       json: true
     };
 
+    // put user profile in database
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
         var access_token = body.access_token,
             refresh_token = body.refresh_token;
 
-        var options = {
+        var profile = {
           url: 'https://api.spotify.com/v1/me',
           headers: { 'Authorization': 'Bearer ' + access_token },
           json: true
         };
 
         // use the access token to access the Spotify Web API
-        request.get(options, function(error, response, body) {
+        // put user profile info in database
+        request.get(profile, function(error, response, body) {
+          console.log("here is the body");
           console.log(body);
+
+          // store in Firebase HERE!!!
+          database.collection("users").add({
+              body
+          })
+            .then(function(docRef) {
+              console.log("Document written with ID: ", docRef.id);
+          })
+          .catch(function(error) {
+              console.error("Error adding document: ", error);
+          });
+          //
+        });
+
+        var playlist = {
+          url: 'https://api.spotify.com/v1/me/playlists',
+          headers: { 'Authorization': 'Bearer ' + access_token },
+          json: true
+        };
+
+        // put user playlist info in database
+        request.get(playlist, function(error, response, body) {
+          console.log("here is the playlist");
+          console.log(body);
+
+          // store in Firebase HERE!!!
+          database.collection("users").add({
+              body
+          })
+            .then(function(docRef) {
+              console.log("Document written with ID: ", docRef.id);
+          })
+          .catch(function(error) {
+              console.error("Error adding document: ", error);
+          });
+          //
         });
 
         // we can also pass the token to the browser to make requests from there
@@ -144,6 +263,8 @@ app.get('/callback', function(req, res) {
     });
   }
 });
+
+
 
 app.get('/refresh_token', function(req, res) {
 
@@ -171,3 +292,5 @@ app.get('/refresh_token', function(req, res) {
 
 console.log('Listening on 8888');
 app.listen(8888);
+
+
