@@ -23,6 +23,9 @@ $(document).ready(function() {
         var oauthTemplate = Handlebars.getTemplate('oauth-template'),
             oauthPlaceholder = document.getElementById('oauth');
 
+        //var userPlaylistsTemplate = Handlebars.getTemplate('user-playlists-template'),
+        //    userPlaylistsPlaceholder = document.getElementById('user-playlists');
+
         var params = getHashParams();
 
         var access_token = params.access_token,
@@ -66,6 +69,45 @@ $(document).ready(function() {
                   $('#login').hide();
                   $.fn.fullpage.destroy('all');
                   $('#loggedin').show();
+
+                }
+            });
+
+            // Get user playlists
+            $.ajax({
+                url: 'https://api.spotify.com/v1/me/playlists',
+                headers: {
+                  'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+                  if(response){
+                    //userPlaylistsPlaceholder.innerHTML = userPlaylistsTemplate(response); // I think this may be unnecessary
+                    for (playlist of response.items){ // Loops through user's playlists
+                      console.log(playlist.tracks.href);
+
+                      // For each playlist, loop through tracks
+                      $.ajax({
+                        url: playlist.tracks.href,
+                        headers: {
+                          'Authorization': 'Bearer ' + access_token
+                        },
+                        success: function(response) {
+                          if(response){
+                            for (song of response.items){ // Goes through each track
+                              console.log(song.track.id); // This is the track id, can be used to find song attributes
+
+                            }
+                          } else{}
+
+                        }
+                      });
+
+                    }
+                  } else{}
+
+                  // $('#login').hide();
+                  // $('#loggedin').show();
+                  console.log(response);
 
                 }
             });
