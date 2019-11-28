@@ -207,7 +207,6 @@ app.get('/callback', function(req, res) {
 
 
 
-        //************USER INFO REQUEST************//
 
         // user info request endpoint
         var profile = {
@@ -256,7 +255,6 @@ app.get('/callback', function(req, res) {
         });
 
 
-        //************PLAYLIST REQUEST************//
 
         // playlist request endpoint
         var playlist = {
@@ -287,17 +285,51 @@ app.get('/callback', function(req, res) {
             headers: { 'Authorization': 'Bearer ' + access_token },
             json: true };
 
-            // request tracks from a playlist
             request.get(playlist_track_request, function(error, response, body) {
               var playlist_tracks = body.items;
-              // Iterate through tracks to get track names and track features
               for(j = 0; j < playlist_tracks.length; j++){
                 // store track names in array
                 var track_id = playlist_tracks[j].track.id;
                 track_names.push(playlist_tracks[j].track.name);
 
 
-                
+
+
+                var features_req = {
+                  url: 'https://api.spotify.com/v1/audio-features/' + track_id,
+                  headers: { 'Authorization': 'Bearer ' + access_token },
+                  json: true
+                };
+
+
+
+                request.get(features_req, function(error, response, body) {
+                  var features = body;
+                  track_features.push(features);
+                  // add audio features for each of user's tracks to field 'audio_features'
+                  database.collection("users").doc(uid).update({
+                    audio_features: track_features
+                  }).then(function() {
+                    //console.log("User audio features updated " + uid);
+                  });
+                });
+              }
+
+
+              database.collection("users").doc(uid).update({
+                tracks: track_names
+              }).then(function() {
+                console.log("User tracks updated " + uid);
+              });
+            });
+        }
+
+          database.collection("users").doc(uid).update({
+            playlists: playlists
+          }).then(function() {
+            console.log("User playlists updated " + uid);
+          });
+
         });
 
 
