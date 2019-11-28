@@ -162,7 +162,7 @@ app.get('/login', function(req, res) {
 
 
 
-// respond with function(req, res) when GET request made to /callback endpoint
+// GET request made to /callback endpoint
 app.get('/callback', function(req, res) {
 
   // your application requests refresh and access tokens
@@ -192,13 +192,32 @@ app.get('/callback', function(req, res) {
       json: true
     };
 
+
+
+
+    //************BEGIN INFO REQUEST/STORES HERE************//
+        // general layout of the nested loop mess below:
+        // request user profile info
+        // request all playlists
+          // for each playlist
+            // request all tracks
+              // for each track
+                // get track name
+                // request track features
+
     // put user profile in database
+    var uid;
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
         var access_token = body.access_token,
             refresh_token = body.refresh_token;
 
+
+
+        //************USER INFO REQUEST************//
+
+        // user info request endpoint
         var profile = {
           url: 'https://api.spotify.com/v1/me',
           headers: { 'Authorization': 'Bearer ' + access_token },
@@ -210,43 +229,69 @@ app.get('/callback', function(req, res) {
         request.get(profile, function(error, response, body) {
           console.log("here is the body");
           console.log(body);
+          var user = body;
+          uid = user.id;
 
-          // store in Firebase HERE!!!
-          database.collection("users").add({
-              body
-          })
-            .then(function(docRef) {
-              console.log("Document written with ID: ", docRef.id);
-          })
-          .catch(function(error) {
-              console.error("Error adding document: ", error);
-          });
+          // store in Firebase as new document - random doc name assigned
+          // this was part of first attempt - don't use this 
+          // database.collection("users").add({
+          //     body
+          // })
+          //   .then(function(docRef) {
+          //     console.log("Document written with ID: ", docRef.id);
+          // })
+          // .catch(function(error) {
+          //     console.error("Error adding document: ", error);
+          // });
           //
+
+          // reformat user JSON object when storing in firebase
+          var user_info_text ='{"Name":"' + user.display_name +'",' +
+                              '"User ID":"' + user.id +'",' +
+                              '"Email":"' + user.email +'",' +
+                              '"Country":"' + user.country +'"}';
+          var user_info = JSON.parse(user_info_text);
+
+          // create new doc in Firebase with Spotify uid as doc name 
+          database.collection("users").doc(uid.toString()).set({
+            user: user_info,
+            playlists: "",
+            tracks: "",
+            audio_features: ""
+          }).then(function() {
+            console.log("User created " + uid);
+          });
         });
 
-        var playlist = {
-          url: 'https://api.spotify.com/v1/me/playlists',
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
 
-        // put user playlist info in database
-        request.get(playlist, function(error, response, body) {
-          console.log("here is the playlist");
-          console.log(body);
 
-          // store in Firebase HERE!!!
-          database.collection("users").add({
-              body
-          })
-            .then(function(docRef) {
-              console.log("Document written with ID: ", docRef.id);
-          })
-          .catch(function(error) {
-              console.error("Error adding document: ", error);
-          });
-          //
-        });
+
+
+        // request.get(playlist, function(error, response, body) {
+        //   console.log("here is the playlist");
+        //   //console.log(body);
+
+        //   // store in Firebase as new document - random document name assigned
+        //   // database.collection("users").add({
+        //   //     body
+        //   // })
+        //   //   .then(function(docRef) {
+        //   //     console.log("Document written with ID: ", docRef.id);
+        //   // })
+        //   // .catch(function(error) {
+        //   //     console.error("Error adding document: ", error);
+        //   // });
+        //   //
+
+        //   // update playlist attribute for doc with same name (spotify uid)
+        //   // update in Firebase
+        //   database.collection("users").doc(uid).update({
+        //     playlists: body
+        //   }).then(function() {
+        //     console.log("User updated " + uid);
+        //   });
+        // });
+
 
         // we can also pass the token to the browser to make requests from there
         res.redirect('/#' +
