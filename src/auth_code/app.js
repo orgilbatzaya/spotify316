@@ -195,15 +195,7 @@ app.get('/callback', function(req, res) {
 
 
 
-    //************BEGIN INFO REQUEST/STORES HERE************//
-        // general layout of the nested loop mess below:
-        // request user profile info
-        // request all playlists
-          // for each playlist
-            // request all tracks
-              // for each track
-                // get track name
-                // request track features
+
 
     // put user profile in database
     var uid;
@@ -264,7 +256,49 @@ app.get('/callback', function(req, res) {
         });
 
 
+        //************PLAYLIST REQUEST************//
 
+        // playlist request endpoint
+        var playlist = {
+          url: 'https://api.spotify.com/v1/me/playlists',
+          headers: { 'Authorization': 'Bearer ' + access_token },
+          json: true
+        };
+
+        var playlists;
+        track_names = [];
+        track_features = [];
+        // put user playlist info in database
+        // request all of user's playlists
+        request.get(playlist, function(error, response, body) {
+          console.log("here is the playlist");
+          playlists = body.items;
+
+          // Iterate through playlists
+          for (i = 0; i < playlists.length; i++){
+            playlist_id = playlists[i].id; 
+            console.log(playlists[i].name)
+            console.log("*******************")
+
+            // playlist track request endpoint
+            var req_url = "https://api.spotify.com/v1/playlists/"+ playlist_id +"/tracks"
+            var playlist_track_request = {
+            url: req_url,
+            headers: { 'Authorization': 'Bearer ' + access_token },
+            json: true };
+
+            // request tracks from a playlist
+            request.get(playlist_track_request, function(error, response, body) {
+              var playlist_tracks = body.items;
+              // Iterate through tracks to get track names and track features
+              for(j = 0; j < playlist_tracks.length; j++){
+                // store track names in array
+                var track_id = playlist_tracks[j].track.id;
+                track_names.push(playlist_tracks[j].track.name);
+
+
+                
+        });
 
 
         // request.get(playlist, function(error, response, body) {
