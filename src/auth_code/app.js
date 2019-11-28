@@ -195,7 +195,15 @@ app.get('/callback', function(req, res) {
 
 
 
-
+    //************BEGIN INFO REQUEST/STORES HERE************//
+        // general layout of the nested loop mess below:
+        // request user profile info
+        // request all playlists
+          // for each playlist
+            // request all tracks
+              // for each track
+                // get track name
+                // request track features
 
     // put user profile in database
     var uid;
@@ -207,6 +215,7 @@ app.get('/callback', function(req, res) {
 
 
 
+        //************USER INFO REQUEST************//
 
         // user info request endpoint
         var profile = {
@@ -255,6 +264,7 @@ app.get('/callback', function(req, res) {
         });
 
 
+        //************PLAYLIST REQUEST************//
 
         // playlist request endpoint
         var playlist = {
@@ -285,15 +295,17 @@ app.get('/callback', function(req, res) {
             headers: { 'Authorization': 'Bearer ' + access_token },
             json: true };
 
+            // request tracks from a playlist
             request.get(playlist_track_request, function(error, response, body) {
               var playlist_tracks = body.items;
+              // Iterate through tracks to get track names and track features
               for(j = 0; j < playlist_tracks.length; j++){
                 // store track names in array
                 var track_id = playlist_tracks[j].track.id;
                 track_names.push(playlist_tracks[j].track.name);
 
 
-
+                //************AUDIO FEATURES REQUEST************//
 
                 var features_req = {
                   url: 'https://api.spotify.com/v1/audio-features/' + track_id,
@@ -301,8 +313,12 @@ app.get('/callback', function(req, res) {
                   json: true
                 };
 
+                // note that when storing the features of each track in an array, then storing the array
+                // in a firebase field, that database.collection command must be INSIDE the requests.get
+                // function, even if it's nested within the for loop that goes through each track.
+                // same case for storing track names.
 
-
+                // request track features
                 request.get(features_req, function(error, response, body) {
                   var features = body;
                   track_features.push(features);
@@ -315,7 +331,7 @@ app.get('/callback', function(req, res) {
                 });
               }
 
-
+              // add list of track names to firebase to field 'tracks'
               database.collection("users").doc(uid).update({
                 tracks: track_names
               }).then(function() {
@@ -324,6 +340,7 @@ app.get('/callback', function(req, res) {
             });
         }
 
+          // update playlist attribute for doc with same name (spotify uid)
           database.collection("users").doc(uid).update({
             playlists: playlists
           }).then(function() {
