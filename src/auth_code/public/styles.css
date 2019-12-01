@@ -73,13 +73,20 @@ body{
 
 .profile-img {
   border-radius: 50%;
+  border: 5px solid white;
 }
 
 .profile-bk{
 	background-image: linear-gradient(rgba(255,218,35,1), rgba(255,218,35,0.2));
-	height: 300px;
-	margin: 0px;
+	height: 400px;
+	padding: 50px 0px 0px 0px;
 	border-radius: 10% 10% 0% 0%;
+	line-height: 1em;
+}
+
+.profile-stats{
+	line-height: 1em;
+	padding: 25px 10px 0px 10px;
 }
 
 .profile-col{
