@@ -94,3 +94,75 @@ body{
 	border: 1px solid #ffda23;
 	border-radius: 25px;
 }
+
+.dummy-pat-2 {
+	background-image: linear-gradient(to bottom left, #ffda23, #FF23C0);
+	width: 100%;
+	height: 250px;
+	border-radius: 25px;
+}
+
+.tab-nav-wrapper {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.tab-content-wrapper{
+	padding: 10px;
+}
+
+.tab1-c , .tab2-c, .tab3-c, .tab4-c{display:none;}
+
+.tab-nav-wrapper > ul > li {
+  display: inline;
+  text-align: center;
+}
+
+.tab-nav-wrapper > ul > li > a {
+  display: inline-block;
+  width: 25%;
+  padding: .75rem 0;
+  margin: 0;
+  text-decoration: none;
+  color: #333;
+}
+ /*
+.tab-button-two:hover ~ hr {
+  margin-left: 25%;
+  background: orange;
+}
+
+.tab-button-three:hover ~ hr {
+  margin-left: 50%;
+  background: yellow;
+}
+
+.tab-button-four:hover ~ hr {
+  margin-left: 75%;
+  background: red;
+} 
+*/
+.tab-button-one.current ~ hr, ul li.tab-button-one:hover ~ hr {
+  margin-left: 0%;
+}
+
+.tab-button-two.current ~ hr, li.tab-button-two:hover ~ hr {
+  margin-left: 25%;
+}
+
+.tab-button-three.current ~ hr, .tab-button-three:hover ~ hr {
+  margin-left: 50%;
+}
+
+.tab-button-four.current ~ hr, .tab-button-four:hover ~ hr {
+  margin-left: 75%;
+}
+
+hr {
+  height: .25rem;
+  width: 25%;
+  margin: 0;
+  background: tomato;
+  border: none;
+  transition: .3s ease-in-out;
+}

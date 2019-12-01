@@ -143,8 +143,24 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-9" style="background-color: aquamarine">
-				  One of three columns
+				<div class="col-lg-9">
+					<div class="dummy-pat-2 text-center">Overview Data Vis. Goes Here</div><br>
+					<div class="tab-nav-wrapper">
+					  <ul>
+						<li class="tab-button-one"><a href="#">ONE</a></li><!--
+					 --><li class="tab-button-two"><a href="#">TWO</a></li><!--
+					 --><li class="tab-button-three"><a href="#">THREE</a></li><!--
+					 --><li class="tab-button-four"><a href="#">FOUR</a></li>
+						<hr />
+					  </ul>
+					</div>
+					<div class="tab-content-wrapper">
+					  <div class="tab1-c"><p>This is ONE</p></div> 
+					  <div class="tab2-c"><p>This is TWO</p></div> 
+					  <div class="tab3-c"><p>This is THREE</p></div> 
+					  <div class="tab4-c"><p>This is FOUR</p></div> 
+
+					</div>					
 				</div>
 			  </div>
 			  <div class="row">
@@ -236,6 +252,20 @@
     document.getElementById('signin-button').style.display = "block";
   }
   </script>	 
+	 
+	 <!-- tab togglinf -->
+	 <script>
+		$('.tab-nav-wrapper ul li a').click(function(){  
+		  $('.tab-content-wrapper > div').hide();
+		 $('.tab-content-wrapper > div').eq($(this).parent().index()).show();  
+		});	
+		 
+		$('.tab-nav-wrapper ul li').on('click', function() {
+		  $('.current').removeClass('current');
+		  $(this).addClass('current');
+		}).has("a[href*='" + location.pathname + "']").addClass("current");		 
+	 </script>
+	 
 	 
 	 <!-- full page jQeuery plugin -->
 	 <script id="fullpage-jquery">
