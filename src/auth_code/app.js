@@ -19,7 +19,7 @@ var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 // Firebase App (the core Firebase SDK) is always required and
 // must be listed before other Firebase SDKs
-var firebase = require("firebase");
+var firebase = require("firebase/app");
 
 // Add the Firebase products that you want to use
 require("firebase/database");
@@ -43,7 +43,6 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 // Get a reference to the database service
-
 var database = firebase.firestore();
 
 // console.log("database");
@@ -120,17 +119,17 @@ function signIn() {
 
 
 
-firebase.auth().onAuthStateChanged(user => {
-  if (user) {
-    console.log("Authenticated:", user);
-    // Show sign out button
-    document.getElementById('signout-button').style.display = "block";
-    document.getElementById('signin-button').style.display = "none";
-    document.getElementById('loading').style.display = "none";
-  } else {
-    showLoginUI();
-  }
-});
+// firebase.auth().onAuthStateChanged(user => {
+//   if (user) {
+//     console.log("Authenticated:", user);
+//     // Show sign out button
+//     document.getElementById('signout-button').style.display = "block";
+//     document.getElementById('signin-button').style.display = "none";
+//     document.getElementById('loading').style.display = "none";
+//   } else {
+//     showLoginUI();
+//   }
+// });
 
 
 
@@ -421,5 +420,3 @@ app.get('/refresh_token', function(req, res) {
 
 console.log('Listening on 8888');
 app.listen(8888);
-
-
