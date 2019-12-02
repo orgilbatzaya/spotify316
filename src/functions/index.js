@@ -1,59 +1,26 @@
-/**
- * This is an example of a basic node.js script that performs
- * the Authorization Code oAuth2 flow to authenticate against
- * the Spotify Accounts.
- *
- * For more information, read
- * https://developer.spotify.com/web-api/authorization-guide/#authorization_code_flow
- */
+const functions = require('firebase-functions');
+
+// // Create and Deploy Your First Cloud Functions
+// // https://firebase.google.com/docs/functions/write-firebase-function
+//
+
+const admin = require('firebase-admin');
+const serviceAcc = require('./spotify316-40ea2-firebase-adminsdk-ltrw9-f1e70ad9bc.json');
+admin.initializeApp(functions.config().firebase);
 
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
+var session = require('express-session')
+
 
 var client_id = 'c78526ebdf26433cbb293f2dc1fa32e6';//'efa17a8f851d4bea93553ea7e2610eb0'; // Your client id
 var client_secret = '7a6b0c4952c74b4293813ceb82046092';//'27a6fe62777a4de6855b83f62e1367a0'; // Your secret
-var redirect_uri = 'https://spotify316-40ea2.firebaseapp.com/callback'; //'http://localhost:8888/callback'; // Your redirect uri
-
-// Firebase App (the core Firebase SDK) is always required and
-// must be listed before other Firebase SDKs
-var firebase = require("firebase/app");
-
-// Add the Firebase products that you want to use
-require("firebase/database");
-require('firebase/auth');
-require("firebase/firestore");
-
-// TODO: Replace the following with your app's Firebase project configuration
-var firebaseConfig = {
-
-  apiKey: "AIzaSyA7n3Skbd9S7vs8Ze4-zUXTG0XdOUOfbeI",
-  authDomain: "spotify316-40ea2.firebaseapp.com",
-  databaseURL: "https://spotify316-40ea2.firebaseio.com",
-  projectId: "spotify316-40ea2",
-  storageBucket: "spotify316-40ea2.appspot.com",
-  messagingSenderId: "1043630421868",
-  appId: "1:1043630421868:web:aeff8a4bd8df01e14f6549",
-  measurementId: "G-8CBFXCHDNE"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
-// Get a reference to the database service
-var database = firebase.firestore();
-
-// console.log("database");
-// console.log(database);
+var redirect_uri = 'https://spotify316-40ea2.firebaseapp.com/callback'; // 'http://localhost:5000/callback'Your redirect uri
 
 
-/**
- * Generates a random string containing numbers and letters
- * @param  {number} length The length of the string
- * @return {string} The generated string
- */
 var generateRandomString = function(length) {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -64,89 +31,22 @@ var generateRandomString = function(length) {
   return text;
 };
 
-var stateKey = 'spotify_auth_state';
+var stateKey = '__session';//'spotify_auth_state';
 
 var app = express();
-console.log(__dirname);
-app.use(express.static(__dirname + '/public'))
-   .use(cors())
+app.use(cors())
+	// .use(session({
+	// 	secret: 'keyboard cat',
+	// 	resave: true,
+	//   cookie: { secure: false }
+	// }))
    .use(cookieParser());
 
-
-
-function getUserData(accessToken) {
-  return fetch(
-    'https://api.spotify.com/v1/me',
-    { 'headers': {'Authorization': 'Bearer ' + accessToken } }
-  );
-}
-
-
-
-function showLoginUI() {
-// Show sign in button
-document.getElementById('signout-button').style.display = "none";
-document.getElementById('loading').style.display = "none";
-document.getElementById('signin-button').style.display = "block";
-}
-
-
-
-function signIn() {
-  // Show loading text
-  document.getElementById('loading').style.display = "block";
-  // Hide buttons
-  document.getElementById('signout-button').style.display = "none";
-  document.getElementById('signin-button').style.display = "none";
-  login()
-    .then(accessToken => getUserData(accessToken))
-    .then(response => response.json())
-    .then(data => {
-      // Call the signup function with the spotify id
-      const signUp = firebase.functions().httpsCallable('signUp');
-      return signUp({user_id: `spotify:${data.id}`})
-    })
-    .then(result => {
-      // Sign in with the token from the function
-      const token = result.data.token;
-      return app.auth().signInWithCustomToken(token)
-    }).then(user => {
-      console.log("Logged in:", user);
-    }).catch(error => {
-      console.error(error);
-    });
-}
-
-
-
-// firebase.auth().onAuthStateChanged(user => {
-//   if (user) {
-//     console.log("Authenticated:", user);
-//     // Show sign out button
-//     document.getElementById('signout-button').style.display = "block";
-//     document.getElementById('signin-button').style.display = "none";
-//     document.getElementById('loading').style.display = "none";
-//   } else {
-//     showLoginUI();
-//   }
-// });
-
-
-
-function signOut() {
-  firebase.auth().signOut().then(() => {
-    showLoginUI();
-  }).catch((error) => {
-    console.error("Something bad happened");
-  });
-}
-
-
-
 app.get('/login', function(req, res) {
-
+	console.log("LOGGIN INNNNNN");
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
+  //res.setHeader('Cache-Control', 'private');
 
   // your application requests authorization
   var scope = 'user-read-private user-read-email user-top-read';
@@ -160,8 +60,6 @@ app.get('/login', function(req, res) {
     }));
 });
 
-
-
 // GET request made to /callback endpoint
 app.get('/callback', function(req, res) {
 
@@ -171,6 +69,11 @@ app.get('/callback', function(req, res) {
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
+  console.log("CODE: "+code);
+  console.log("STATE: "+state);
+  console.log("STORED STATE: "+storedState);
+  console.log("	COOKIES: "+req.cookies[stateKey]);
+
 
   if (state === null || state !== storedState) {
     res.redirect('/#' +
@@ -179,19 +82,25 @@ app.get('/callback', function(req, res) {
       }));
   } else {
     res.clearCookie(stateKey);
+    console.log("CODE OF CALLBACK: "+code);
     var authOptions = {
       url: 'https://accounts.spotify.com/api/token',
       form: {
         code: code,
         redirect_uri: redirect_uri,
-        grant_type: 'authorization_code'
-      },
+        grant_type: 'authorization_code'//,
+        //client_secret: client_secret,
+        //client_id: client_id
+      }
+      ,
       headers: {
-        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')),
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
       json: true
     };
 
+    console.log("CODE OF CALLBACK: "+code);
 
 
 
@@ -417,5 +326,7 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-console.log('Listening on 8888');
-app.listen(8888);
+
+exports.app = functions.https.onRequest(app);
+//  response.send("Hello from Firebase!");
+// });

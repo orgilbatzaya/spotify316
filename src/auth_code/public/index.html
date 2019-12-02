@@ -53,85 +53,7 @@
 		   <button id="signin-button" onclick="signIn();" style="display: none;">Login</button>
   <div id="loading" style="display: none;">Signing in...</div>
   <button id="signout-button" onclick="signOut();" style="display: none;">Sign Out</button>
-  <script>
-    // Initialise Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    function login() {
-      function getLoginURL(scopes) {
-        return 'https://accounts.spotify.com/authorize?client_id=' + spotifyConfig.clientId +
-          '&redirect_uri=' + encodeURIComponent(spotifyConfig.redirectUri) +
-          '&scope=' + encodeURIComponent(scopes.join(' ')) +
-          '&response_type=token';
-      }
-      const url = getLoginURL([
-        'user-read-email'
-      ]);
-      return new Promise((resolve, reject) => {
-        window.addEventListener('message', event => {
-          const hash = JSON.parse(event.data);
-          if (hash.type == 'access_token') {
-            resolve(hash.access_token);
-          }
-        }, false);
-        // Show spotify auth popup
-        window.open(url, 'Spotify', 'height=600,width=400');
-      });
-    }
-    function getUserData(accessToken) {
-      return fetch(
-        'https://api.spotify.com/v1/me',
-        { 'headers': {'Authorization': 'Bearer ' + accessToken } }
-      );
-    }
-    function signIn() {
-      // Show loading text
-      document.getElementById('loading').style.display = "block";
-      // Hide buttons
-      document.getElementById('signout-button').style.display = "none";
-      document.getElementById('signin-button').style.display = "none";
-      login()
-        .then(accessToken => getUserData(accessToken))
-        .then(response => response.json())
-        .then(data => {
-          // Call the signup function with the spotify id
-          const signUp = firebase.functions().httpsCallable('signUp');
-          return signUp({user_id: `spotify:${data.id}`})
-        })
-        .then(result => {
-          // Sign in with the token from the function
-          const token = result.data.token;
-          return app.auth().signInWithCustomToken(token)
-        }).then(user => {
-          console.log("Logged in:", user);
-        }).catch(error => {
-          console.error(error);
-        });
-    }
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      console.log("Authenticated:", user);
-      // Show sign out button
-      document.getElementById('signout-button').style.display = "block";
-      document.getElementById('signin-button').style.display = "none";
-      document.getElementById('loading').style.display = "none";
-    } else {
-      showLoginUI();
-    }
-  });
-  function signOut() {
-    firebase.auth().signOut().then(() => {
-      showLoginUI();
-    }).catch((error) => {
-      console.error("Something bad happened");
-    });
-  }
-  function showLoginUI() {
-    // Show sign in button
-    document.getElementById('signout-button').style.display = "none";
-    document.getElementById('loading').style.display = "none";
-    document.getElementById('signin-button').style.display = "block";
-  }
-  </script>
+  
 		</nav>	
 		 
 		 <div id="fullpage" style="top: 0px">			 
@@ -216,6 +138,10 @@
 			 <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
 		 </div>
 	 </div>
+
+
+
+
 	 
 	 <!-- full page jQeuery plugin -->
 	 <script id="fullpage-jquery">
@@ -232,8 +158,11 @@
 		 });
 	 </script>
 	 
+      
+
       <script type="text/javascript" src="login.js"></script>
-      <!-- The core Firebase JS SDK is always required and must be listed first -->
+
+      	 <!-- The core Firebase JS SDK is always required and must be listed first -->
       <script src="/__/firebase/7.2.2/firebase-app.js"></script>
 
       <!-- TODO: Add SDKs for Firebase products that you want to use
@@ -242,6 +171,7 @@
   
       <!-- Initialize Firebase -->
       <script src="/__/firebase/init.js"></script>
+
 
   </body>
 </html>
