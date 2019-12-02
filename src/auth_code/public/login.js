@@ -19,6 +19,9 @@ $(document).ready(function() {
 
         var topArtistsTemplate = Handlebars.getTemplate('top-artists-template'),
             topArtistsPlaceholder = document.getElementById('topartists');
+	
+		var topTracksTemplate = Handlebars.getTemplate('top-tracks-template'),
+            topTracksPlaceholder = document.getElementById('toptracks');
 
         var oauthTemplate = Handlebars.getTemplate('oauth-template'),
             oauthPlaceholder = document.getElementById('oauth');
@@ -46,6 +49,22 @@ $(document).ready(function() {
                 },
                 success: function(response) {
                   topArtistsPlaceholder.innerHTML = topArtistsTemplate(response);
+
+                  // $('#login').hide();
+                  // $('#loggedin').show();
+                  console.log(response);
+
+                }
+            });
+            console.log(access_token);
+			
+			$.ajax({
+                url: 'https://api.spotify.com/v1/me/top/tracks',
+                headers: {
+                  'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+                  topTracksPlaceholder.innerHTML = topTracksTemplate(response);
 
                   // $('#login').hide();
                   // $('#loggedin').show();

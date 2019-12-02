@@ -18,7 +18,7 @@ var session = require('express-session')
 
 var client_id = 'c78526ebdf26433cbb293f2dc1fa32e6';//'efa17a8f851d4bea93553ea7e2610eb0'; // Your client id
 var client_secret = '7a6b0c4952c74b4293813ceb82046092';//'27a6fe62777a4de6855b83f62e1367a0'; // Your secret
-var redirect_uri = 'https://spotify316-40ea2.firebaseapp.com/callback'; // 'http://localhost:5000/callback'Your redirect uri
+var redirect_uri = 'http://localhost:5000/callback';//'https://spotify316-40ea2.firebaseapp.com/callback'; // 'Your redirect uri
 
 
 var generateRandomString = function(length) {
@@ -31,22 +31,15 @@ var generateRandomString = function(length) {
   return text;
 };
 
-var stateKey = '__session';//'spotify_auth_state';
+var stateKey = '__session';// used to be 'spotify_auth_state' but google only recognizes __session
 
 var app = express();
 app.use(cors())
-	// .use(session({
-	// 	secret: 'keyboard cat',
-	// 	resave: true,
-	//   cookie: { secure: false }
-	// }))
    .use(cookieParser());
 
 app.get('/login', function(req, res) {
-	console.log("LOGGIN INNNNNN");
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
-  //res.setHeader('Cache-Control', 'private');
 
   // your application requests authorization
   var scope = 'user-read-private user-read-email user-top-read';
@@ -69,12 +62,7 @@ app.get('/callback', function(req, res) {
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
-  console.log("CODE: "+code);
-  console.log("STATE: "+state);
-  console.log("STORED STATE: "+storedState);
-  console.log("	COOKIES: "+req.cookies[stateKey]);
-
-
+ 
   if (state === null || state !== storedState) {
     res.redirect('/#' +
       querystring.stringify({
@@ -88,9 +76,7 @@ app.get('/callback', function(req, res) {
       form: {
         code: code,
         redirect_uri: redirect_uri,
-        grant_type: 'authorization_code'//,
-        //client_secret: client_secret,
-        //client_id: client_id
+        grant_type: 'authorization_code'
       }
       ,
       headers: {
@@ -99,10 +85,6 @@ app.get('/callback', function(req, res) {
       },
       json: true
     };
-
-    console.log("CODE OF CALLBACK: "+code);
-
-
 
     //************BEGIN INFO REQUEST/STORES HERE************//
         // general layout of the nested loop mess below:
@@ -121,8 +103,6 @@ app.get('/callback', function(req, res) {
 
         var access_token = body.access_token,
             refresh_token = body.refresh_token;
-
-
 
         //************USER INFO REQUEST************//
 

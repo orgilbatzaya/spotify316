@@ -8,11 +8,15 @@ body{
 	font-family: 'Montserrat', sans-serif !important;
 }
 
+.center-pane-margin{
+	margin-top: 50px!important;
+}
+
 #login, #loggedin {
         display: none;
       }
 
-  .text-overflow {
+.text-overflow {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -69,4 +73,98 @@ body{
 
 .profile-img {
   border-radius: 50%;
+  border: 5px solid white;
+}
+
+.profile-bk{
+	background-image: linear-gradient(rgba(255,218,35,1), rgba(255,218,35,0.2));
+	height: 400px;
+	padding: 50px 0px 0px 0px;
+	border-radius: 25px 25px 0px 0px;
+	line-height: 1em;
+}
+
+.profile-stats{
+	line-height: 1em;
+	padding: 15px 15px 0px 10px;
+	line-height: .9em;
+}
+
+.profile-col{
+	border: 1px solid #ffda23;
+	border-radius: 25px;
+}
+
+.dummy-pat-2 {
+	background-image: linear-gradient(to bottom left, #ffda23, #FF23C0);
+	width: 100%;
+	height: 250px;
+	border-radius: 25px;
+}
+
+.tab-nav-wrapper {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.tab-content-wrapper{
+	padding: 10px;
+}
+
+.tab2-c, .tab3-c, .tab4-c{display:none;}
+
+
+.tab-nav-wrapper > ul > li {
+  display: inline;
+  text-align: center;
+}
+
+.tab-nav-wrapper > ul > li > a {
+  display: inline-block;
+  width: 25%;
+  padding: .50rem 0;
+  margin: 0;
+  text-decoration: none;
+  color: #333;
+}
+ /*
+.tab-button-two:hover ~ hr {
+  margin-left: 25%;
+  background: orange;
+}
+
+.tab-button-three:hover ~ hr {
+  margin-left: 50%;
+  background: yellow;
+}
+
+.tab-button-four:hover ~ hr {
+  margin-left: 75%;
+  background: red;
+} 
+*/
+.tab-button-one.current ~ hr, ul li.tab-button-one:hover ~ hr {
+  margin-left: 0%;
+}
+
+.tab-button-two.current ~ hr, li.tab-button-two:hover ~ hr {
+  margin-left: 25%;
+}
+
+.tab-button-three.current ~ hr, .tab-button-three:hover ~ hr {
+  margin-left: 50%;
+}
+
+.tab-button-four.current ~ hr, .tab-button-four:hover ~ hr {
+  margin-left: 75%;
+}
+
+hr {
+  height: .25rem;
+  width: 25%;
+  margin: 0;
+  padding: 0;
+  background: #ffda23 !important;
+  border: none;
+  transition: .3s ease-in-out;
 }

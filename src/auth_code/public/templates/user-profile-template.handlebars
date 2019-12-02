@@ -1,3 +1,4 @@
+<!--
 <h1>Logged in as {{display_name}}</h1>  
       <div class="media">
         <div class="pull-left">
@@ -14,4 +15,13 @@
             <dt>Country</dt><dd>{{country}}</dd>
           </dl>
         </div>
-      </div>
+      </div> 
+-->
+<div class="profile-bk">
+	<center><img class="profile-img" width="200" height="200" src="{{images.0.url}}" /></center><br>
+	<h2>{{display_name}}</h2><br>
+	<p>{{followers.total}} <span style="color:gray">Followers</span></p>
+<!--	<p>2000 <span style="color:gray">Following</span></p> -->
+	<a href="{{external_urls.spotify}}">{{display_name}}'s Spotify</a>
+</div>
+
