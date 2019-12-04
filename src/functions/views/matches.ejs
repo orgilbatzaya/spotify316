@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Discover</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" type="text/css" href="./../styles.css">
+
+</head>
+<body>
+  <nav class="navbar navbar-default fixed-top">
+      <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">LOGO</a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="active"><a href="./matches" style="color: white !important">Matches</a></li>
+        <li><a href="#" style="color: white !important">Discover</a></li>
+        <li><a href="/index.html" style="color: white !important"><i class="fas fa-user" style="color: white"></i> Profile</a></li>
+        <li><a href="#"><i class="fas fa-comment-dots" style="color: white"></i></a></li>
+        <li><a href="#"><i class="fas fa-bell" style="color: white"></i></a></li>
+      </ul>
+      </div>
+    </nav>
+  <h1>Matches</h1>
+  
+
+  <ul>
+    <% users.forEach(function(user) { %>
+        <li><%= user.Name %> - <%= user.Email %></li>
+        <button type="button" class="btn btn-lightred btn-primary">Follow</button>
+
+    <% }); %>
+</ul>
+  <script>
+    
+    
+  </script>
+</body>
+</html>
