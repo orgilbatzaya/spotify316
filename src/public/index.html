@@ -120,15 +120,8 @@
 			  <a class="navbar-brand" href="#">LOGO</a>
 			</div>
 			<ul class="nav navbar-nav navbar-right">
-			  <li><a href="./matches.html" style="color: white !important">Matches</a></li>
-			  <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color: white !important">Analysis<span class="caret"></span></a>
-				<ul class="dropdown-menu">
-				  <li><a href="#" style="color: white !important">Page 1-1</a></li>
-				  <li><a href="#" style="color: white !important">Page 1-2</a></li>
-				  <li><a href="#" style="color: white !important">Page 1-3</a></li>
-				</ul>
-			  </li>
-              <li><a href="/discover" style="color: white !important">Discover</a></li>
+			  <li><a href="./matches" style="color: white !important">Matches</a></li>
+              <li><a href="#" style="color: white !important">Discover</a></li>
               <li class="active"><a href="#" style="color: white !important"><i class="fas fa-user" style="color: white"></i> Profile</a></li>
               <li><a href="#"><i class="fas fa-comment-dots" style="color: white"></i></a></li>
               <li><a href="#"><i class="fas fa-bell" style="color: white"></i></a></li>
@@ -152,48 +145,17 @@
 					<div class="dummy-pat-2 text-center">Overview Data Vis. Goes Here</div><br>
 					<div class="tab-nav-wrapper">
 					  <ul>
-						<li class="tab-button-one"><a href="#">Music Analysis</a></li><!--
-					 --><li class="tab-button-two"><a href="#">Data Visuals</a></li><!--
+						<li class="tab-button-one"><a href="#">Recent Trends</a></li><!--
+					 --><li class="tab-button-two"><a href="#">Top Tracks/Artists</a></li><!--
 					 --><li class="tab-button-three"><a href="#">Playlists</a></li><!--
-					 --><li class="tab-button-four"><a href="#">Top Artists and Tracks</a></li>
+					 --><li class="tab-button-four"><a href="#">Followers</a></li>
 						<hr style="height: .25rem; border: 0px solid #ffda23; border-top-width: 1px;"/>
 					  </ul>
 					</div>
 					<div class="tab-content-wrapper">
-					  <div class="tab1-c"><p>This is for Music Analysis</p>
-					  	<script src="https://sdk.scdn.co/spotify-player.js"></script>
-						  <script>
-						    window.onSpotifyWebPlaybackSDKReady = () => {
-						      const token = 'BQAQOBm0L4Ur-wZQ7W9YWCimLs_xuA0zhV34f6-YaxOyi1YyjzbxRO0BlrfElfqbuXAVt-R3JvPQV69vcljv8ZU6ugT272thigh7GJuUp_tiXA3MbPD0qA9SSDAzoYU-ohAXZRRpPmxKIyCk_naGfiAiH3m1bk7DrueHjaP6QgROCX_EFJYJtgM';
-						      const player = new Spotify.Player({
-						        name: 'Web Playback SDK Quick Start Player',
-						        getOAuthToken: cb => { cb(token); }
-						      });
-
-						      // Error handling
-						      player.addListener('initialization_error', ({ message }) => { console.error(message); });
-						      player.addListener('authentication_error', ({ message }) => { console.error(message); });
-						      player.addListener('account_error', ({ message }) => { console.error(message); });
-						      player.addListener('playback_error', ({ message }) => { console.error(message); });
-
-						      // Playback status updates
-						      player.addListener('player_state_changed', state => { console.log(state); });
-
-						      // Ready
-						      player.addListener('ready', ({ device_id }) => {
-						        console.log('Ready with Device ID', device_id);
-						      });
-
-						      // Not Ready
-						      player.addListener('not_ready', ({ device_id }) => {
-						        console.log('Device ID has gone offline', device_id);
-						      });
-
-						      // Connect to the player!
-						      player.connect();
-						    };
-						  </script>
-					  </div> 
+					  <div class="tab1-c">
+					  	<h4>Objectives and Plan</h4>
+					  	<p>Recent Trends is a section to analyze the top 50 recent songs</p></div> 
 					  <div class="tab2-c"><p>This is for Data Visuals</p></div> 
 					  <div class="tab3-c"><p>This is for Playlists</p></div> 
 					  <div class="tab4-c"><p>This is for Top Artists and Tracks</p></div> 

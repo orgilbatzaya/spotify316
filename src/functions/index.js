@@ -41,7 +41,7 @@ app.set('view engine', 'ejs');
 
 
 
-app.get('/discover', function(req, res) {
+app.get('/matches', function(req, res) {
 
 	var users = [];
 
@@ -51,7 +51,7 @@ app.get('/discover', function(req, res) {
 				var person = doc.data().user;
 				users.push(person);
 			});
-			res.render('discover', {
+			res.render('matches', {
         		users: users
     		});
 
@@ -63,11 +63,9 @@ app.get('/discover', function(req, res) {
 		})      
 });
 
-app.get('/matches', function(req, res) {
-	
-});
 
-app.get('/disover', function(req, res) {
+
+app.get('/discover', function(req, res) {
 	
 });
 

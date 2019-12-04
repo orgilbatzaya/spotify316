@@ -1,6 +1,6 @@
 {
 	"hosting": {
-		"public": "./auth_code/public",
+		"public": "./public",
 
 		"rewrites": [
 			{
