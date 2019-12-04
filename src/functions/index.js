@@ -6,20 +6,21 @@ const functions = require('firebase-functions');
 
 const admin = require('firebase-admin');
 const serviceAcc = require('./spotify316-40ea2-firebase-adminsdk-ltrw9-f1e70ad9bc.json');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp({credential: admin.credential.cert(serviceAcc)}/*functions.config().firebase*/);
+const db = admin.firestore();
 
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-var session = require('express-session')
 
 
 var client_id = 'c78526ebdf26433cbb293f2dc1fa32e6';//'efa17a8f851d4bea93553ea7e2610eb0'; // Your client id
 var client_secret = '7a6b0c4952c74b4293813ceb82046092';//'27a6fe62777a4de6855b83f62e1367a0'; // Your secret
 var redirect_uri = 'http://localhost:5000/callback';//'https://spotify316-40ea2.firebaseapp.com/callback'; // 'Your redirect uri
 
+var global_access_tok = '';
 
 var generateRandomString = function(length) {
   var text = '';
@@ -36,13 +37,51 @@ var stateKey = '__session';// used to be 'spotify_auth_state' but google only re
 var app = express();
 app.use(cors())
    .use(cookieParser());
+app.set('view engine', 'ejs');
+
+
+
+app.get('/discover', function(req, res) {
+
+	var users = [];
+
+	db.collection('users').get()
+		.then(snapshot => {
+			snapshot.forEach(doc => {
+				var person = doc.data().user;
+				users.push(person);
+			});
+			res.render('discover', {
+        		users: users
+    		});
+
+			
+		})
+		.catch(err => {
+			console.error('Error getting documents',err);
+			process.exit();
+		})      
+});
+
+app.get('/matches', function(req, res) {
+	
+});
+
+app.get('/disover', function(req, res) {
+	
+});
+
+
+
+
 
 app.get('/login', function(req, res) {
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email user-top-read';
+  var scope = ['user-read-private', 'user-read-email', 'user-top-read','user-read-recently-played',
+  				'user-library-read','user-follow-read','user-follow-modify'].join(' ');
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -52,6 +91,8 @@ app.get('/login', function(req, res) {
       state: state
     }));
 });
+
+
 
 // GET request made to /callback endpoint
 app.get('/callback', function(req, res) {
@@ -103,6 +144,8 @@ app.get('/callback', function(req, res) {
 
         var access_token = body.access_token,
             refresh_token = body.refresh_token;
+        global_access_tok = access_token;
+
 
         //************USER INFO REQUEST************//
 
@@ -116,23 +159,8 @@ app.get('/callback', function(req, res) {
         // use the access token to access the Spotify Web API
         // put user profile info in database
         request.get(profile, function(error, response, body) {
-          console.log("here is the body");
-          console.log(body);
           var user = body;
           uid = user.id;
-
-          // store in Firebase as new document - random doc name assigned
-          // this was part of first attempt - don't use this 
-          // database.collection("users").add({
-          //     body
-          // })
-          //   .then(function(docRef) {
-          //     console.log("Document written with ID: ", docRef.id);
-          // })
-          // .catch(function(error) {
-          //     console.error("Error adding document: ", error);
-          // });
-          //
 
           // reformat user JSON object when storing in firebase
           var user_info_text ='{"Name":"' + user.display_name +'",' +
@@ -142,13 +170,17 @@ app.get('/callback', function(req, res) {
           var user_info = JSON.parse(user_info_text);
 
           // create new doc in Firebase with Spotify uid as doc name 
-          database.collection("users").doc(uid.toString()).set({
+          db.collection("users").doc(uid.toString()).set({
             user: user_info,
             playlists: "",
             tracks: "",
             audio_features: ""
-          }).then(function() {
+          })
+          .then(function() {
             console.log("User created " + uid);
+          })
+          .catch(function(error) {
+               console.error("Error adding document: ", error);
           });
         });
 
@@ -212,7 +244,7 @@ app.get('/callback', function(req, res) {
                   var features = body;
                   track_features.push(features);
                   // add audio features for each of user's tracks to field 'audio_features'
-                  database.collection("users").doc(uid).update({
+                  db.collection("users").doc(uid).update({
                     audio_features: track_features
                   }).then(function() {
                     //console.log("User audio features updated " + uid);
@@ -221,7 +253,7 @@ app.get('/callback', function(req, res) {
               }
 
               // add list of track names to firebase to field 'tracks'
-              database.collection("users").doc(uid).update({
+              db.collection("users").doc(uid).update({
                 tracks: track_names
               }).then(function() {
                 console.log("User tracks updated " + uid);
@@ -230,40 +262,13 @@ app.get('/callback', function(req, res) {
         }
 
           // update playlist attribute for doc with same name (spotify uid)
-          database.collection("users").doc(uid).update({
+          db.collection("users").doc(uid).update({
             playlists: playlists
           }).then(function() {
             console.log("User playlists updated " + uid);
           });
 
         });
-
-
-        // request.get(playlist, function(error, response, body) {
-        //   console.log("here is the playlist");
-        //   //console.log(body);
-
-        //   // store in Firebase as new document - random document name assigned
-        //   // database.collection("users").add({
-        //   //     body
-        //   // })
-        //   //   .then(function(docRef) {
-        //   //     console.log("Document written with ID: ", docRef.id);
-        //   // })
-        //   // .catch(function(error) {
-        //   //     console.error("Error adding document: ", error);
-        //   // });
-        //   //
-
-        //   // update playlist attribute for doc with same name (spotify uid)
-        //   // update in Firebase
-        //   database.collection("users").doc(uid).update({
-        //     playlists: body
-        //   }).then(function() {
-        //     console.log("User updated " + uid);
-        //   });
-        // });
-
 
         // we can also pass the token to the browser to make requests from there
         res.redirect('/#' +
@@ -299,6 +304,7 @@ app.get('/refresh_token', function(req, res) {
   request.post(authOptions, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       var access_token = body.access_token;
+      global_access_tok = access_token;
       res.send({
         'access_token': access_token
       });
