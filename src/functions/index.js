@@ -16,8 +16,8 @@ var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
 
-var client_id = 'c78526ebdf26433cbb293f2dc1fa32e6';//'efa17a8f851d4bea93553ea7e2610eb0'; // Your client id
-var client_secret = '7a6b0c4952c74b4293813ceb82046092';//'27a6fe62777a4de6855b83f62e1367a0'; // Your secret
+var client_id = '965431a4e2be43a7b8743881ac9a5d6f';//'efa17a8f851d4bea93553ea7e2610eb0'; // Your client id
+var client_secret = '7516c67f0f03436d8285af8aaf7c7268';//'27a6fe62777a4de6855b83f62e1367a0'; // Your secret
 var redirect_uri = 'http://localhost:5000/callback';//'https://spotify316-40ea2.firebaseapp.com/callback'; // 'Your redirect uri
 
 var global_access_tok = '';
@@ -170,8 +170,6 @@ app.get('/callback', function(req, res) {
           // create new doc in Firebase with Spotify uid as doc name 
           db.collection("users").doc(uid.toString()).set({
             user: user_info,
-            playlists: "",
-            tracks: "",
             audio_features: ""
           })
           .then(function() {
@@ -183,7 +181,10 @@ app.get('/callback', function(req, res) {
         });
 
 
+
+
         //************PLAYLIST REQUEST************//
+
 
         // playlist request endpoint
         var playlist = {
@@ -193,7 +194,7 @@ app.get('/callback', function(req, res) {
         };
 
         var playlists;
-        track_names = [];
+        
         track_features = [];
         // put user playlist info in database
         // request all of user's playlists
@@ -202,8 +203,11 @@ app.get('/callback', function(req, res) {
           playlists = body.items;
 
           // Iterate through playlists
-          for (i = 0; i < playlists.length; i++){
-            playlist_id = playlists[i].id; 
+          for (i = 0; i < playlists.length; i++) {
+            (function(){
+            var track_names = [];
+            var playlist_id = playlists[i].id; 
+            var name = playlists[i].name;
             console.log(playlists[i].name)
             console.log("*******************")
 
@@ -213,6 +217,12 @@ app.get('/callback', function(req, res) {
             url: req_url,
             headers: { 'Authorization': 'Bearer ' + access_token },
             json: true };
+
+            db.collection("users").doc(uid).collection("playlist").doc(name).set({
+              tracks: ""
+            }).then(function() {
+              console.log(name + "This is Karen's work");
+            });
 
             // request tracks from a playlist
             request.get(playlist_track_request, function(error, response, body) {
@@ -248,23 +258,24 @@ app.get('/callback', function(req, res) {
                     //console.log("User audio features updated " + uid);
                   });
                 });
+
+                db.collection("users").doc(uid).collection("playlist").doc(name).update({
+                  tracks: track_names,
+                  info: playlists
+                }).then(function() {
+                  console.log("User tracks updated " + uid);
+                });
               }
 
               // add list of track names to firebase to field 'tracks'
-              db.collection("users").doc(uid).update({
-                tracks: track_names
-              }).then(function() {
-                console.log("User tracks updated " + uid);
-              });
-            });
-        }
+              
+             
 
-          // update playlist attribute for doc with same name (spotify uid)
-          db.collection("users").doc(uid).update({
-            playlists: playlists
-          }).then(function() {
-            console.log("User playlists updated " + uid);
-          });
+            });
+
+            //hre
+          })();
+          }
 
         });
 
