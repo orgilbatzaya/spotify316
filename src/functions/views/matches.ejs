@@ -18,7 +18,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li class="active"><a href="./matches" style="color: white !important">Matches</a></li>
         <li><a href="#" style="color: white !important">Discover</a></li>
-        <li><a href="/index.html" style="color: white !important"><i class="fas fa-user" style="color: white"></i> Profile</a></li>
+        <li><a href="#" style="color: white !important"><i class="fas fa-user" style="color: white"></i> Profile</a></li>
         <li><a href="#"><i class="fas fa-comment-dots" style="color: white"></i></a></li>
         <li><a href="#"><i class="fas fa-bell" style="color: white"></i></a></li>
       </ul>
@@ -30,12 +30,65 @@
   <ul>
     <% users.forEach(function(user) { %>
         <li><%= user.Name %> - <%= user.Email %></li>
-        <button type="button" class="btn btn-lightred btn-primary">Follow</button>
+        <button type="button" name="follow" class="btn btn-lightred btn-primary">Follow</button>
 
     <% }); %>
 </ul>
+
+
   <script>
+    var users = "<%= users %>";
+    function assignButtons() {
+        var btns = document.getElementsByName("follow"); 
+        for (n=0; n < btns.length; n++) {
+            btns[n].id = String(n); 
+        }
+    }; 
+
+    assignButtons();
+
     
+    document.addEventListener('click', function (event) {
+
+      if (event.target.id == '0') {
+        console.log('clicked Orgil');
+      }
+      if (event.target.id == '1') {
+        console.log('clicked Karen');
+      }
+      if (event.target.id == '2') {
+        console.log('clicked Jen');
+        console.log(typeof users);
+        console.log(users.length);
+        var token = "<%= access_token  %>";  
+        var follow_req = {
+          url: 'https://api.spotify.com/v1/me/following',
+          headers: { 'Authorization': 'Bearer ' + access_token,
+                    'Content-Type': 'application/json' },
+          type: 'user',
+          ids: '',
+          json: true
+        };
+
+                
+        // request.get(features_req, function(error, response, body) {
+        //   var features = body;
+        //   track_features.push(features);
+        //   // add audio features for each of user's tracks to field 'audio_features'
+        //   db.collection("users").doc(uid).update({
+        //     audio_features: track_features
+        //   }).then(function() {
+        //     //console.log("User audio features updated " + uid);
+        //   });
+        // });
+      
+      }
+
+      if (event.target.matches('.close')) {
+        // Run your code to close a modal
+      }
+
+    }, false);
     
   </script>
 </body>

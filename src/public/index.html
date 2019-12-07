@@ -46,13 +46,11 @@
 			<ul class="nav navbar-nav navbar-right">
 			  <li data-menuanchor="secondPage"><a href="#secondPage" style="color: white !important">Features</a></li>
 			  <li data-menuanchor="thirdPage"><a href="#thirdPage" style="color: white !important">Our Team</a></li>
-			  <li><a href="/login" style="color: white !important"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+			  <li><a href="" id="sign-in-button-top" style="color: white !important"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
 			</ul>
 		  </div>
 		  
-		   <button id="signin-button" onclick="signIn();" style="display: none;">Login</button>
-  <div id="loading" style="display: none;">Signing in...</div>
-  <button id="signout-button" onclick="signOut();" style="display: none;">Sign Out</button>
+		   
 
 		</nav>	
 		 
@@ -61,7 +59,7 @@
 				 <div class="jumbotron text-center" style="background-color: transparent">
 					 <h1>Spotify316</h1><br><br>
 					 <p>Discover new music. Visualize your playlists. Connect with friends.</p><br>
-					 <a href="/login" class="btn btn-lightred btn-primary btn-lg">Log in with Spotify</a><br><br><br><br>
+					 <a href="/#" id="sign-in-button" class="btn btn-lightred btn-primary btn-lg">Log in with Spotify</a><br><br><br><br>
 				 </div>
 			 </div>
 			 <div class="section" id="full-page-2">
@@ -120,6 +118,7 @@
 			  <a class="navbar-brand" href="#">LOGO</a>
 			</div>
 			<ul class="nav navbar-nav navbar-right">
+		      <li><a href="/#" id="sign-out-button" style="color: white !important">Log Out</a></li>
 			  <li><a href="./matches" style="color: white !important">Matches</a></li>
               <li><a href="#" style="color: white !important">Discover</a></li>
               <li class="active"><a href="#" style="color: white !important"><i class="fas fa-user" style="color: white"></i> Profile</a></li>
@@ -147,7 +146,7 @@
 					  <ul>
 						<li class="tab-button-one"><a href="#">Recent Trends</a></li><!--
 					 --><li class="tab-button-two"><a href="#">Top Tracks/Artists</a></li><!--
-					 --><li class="tab-button-three"><a href="#">Playlists</a></li><!--
+					 --><li class="tab-button-three" id="playlists"><a href="#">Playlists</a></li><!--
 					 --><li class="tab-button-four"><a href="#">Followers</a></li>
 						<hr style="height: .25rem; border: 0px solid #ffda23; border-top-width: 1px;"/>
 					  </ul>
@@ -157,7 +156,7 @@
 					  	<h4>Objectives and Plan</h4>
 					  	<p>Recent Trends is a section to analyze the top 50 recent songs</p></div> 
 					  <div class="tab2-c"><p>This is for Data Visuals</p></div> 
-					  <div class="tab3-c"><p>This is for Playlists</p></div> 
+					  <div class="tab3-c" id="playlists-bottom"><p>This is for Playlists</p></div> 
 					  <div class="tab4-c"><p>This is for Top Artists and Tracks</p></div> 
 
 					</div>					
@@ -173,8 +172,7 @@
 		 
 	 </div>
 	 
- 
-	 
+ 	 
 	 <!-- tab togglinf -->
 	 <script>
 		$('.tab-nav-wrapper ul li a').click(function(){  
@@ -205,17 +203,21 @@
 	 
       
 
-      <script type="text/javascript" src="login.js"></script>
+      
 
-      	 <!-- The core Firebase JS SDK is always required and must be listed first -->
-      <script src="/__/firebase/7.2.2/firebase-app.js"></script>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="/__/firebase/7.2.2/firebase-app.js"></script>
 
       <!-- TODO: Add SDKs for Firebase products that you want to use
           https://firebase.google.com/docs/web/setup#available-libraries -->
-      <script src="/__/firebase/7.2.2/firebase-analytics.js"></script>
-  
+    <script src="/__/firebase/7.5.0/firebase-auth.js"></script>
+    <script src="/__/firebase/7.5.0/firebase-database.js"></script>
+    <script src="/__/firebase/7.5.0/firebase-firestore.js"></script>
+
+      <!-- <script src="/__/firebase/7.2.2/firebase-analytics.js"></script> -->
       <!-- Initialize Firebase -->
       <script src="/__/firebase/init.js"></script>
+      <script type="text/javascript" src="login.js"></script> 
 
 
   </body>
