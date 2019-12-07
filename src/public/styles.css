@@ -36,7 +36,6 @@ body{
 	color: white !important;
 	position: relative;
     z-index:1;
-	border-color: green;
 }
 /*
 .navbar-nav > li > a:hover {
