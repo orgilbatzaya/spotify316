@@ -38,6 +38,9 @@ function Demo(){
 Demo.prototype.onAuthStateChanged = async function(user) {
   if (user) {
     console.log("log in success");
+	$('#login').hide();
+    $.fn.fullpage.destroy('all');
+    $('#loggedin').show();
     var ref = firebase.database().ref(`/spotifyAccessToken/${user.uid}`)
     const snapshot = await ref.once('value');
     var access_token = snapshot.val();
@@ -72,14 +75,19 @@ Demo.prototype.onAuthStateChanged = async function(user) {
           topTracksPlaceholder.innerHTML = topTracksTemplate(response);
         }
     });
-    $('#login').hide();
-    $.fn.fullpage.destroy('all');
-    $('#loggedin').show();
     //this.signedOutCard.style.display = 'none';
     //this.signedInCard.style.display = 'block';
   } else {
     // render initial screen
       console.log("log in failed!");
+	 // $('.fullPageIntroInit').fullpage();
+	  $('#fullpage').fullpage({
+				 //options here
+				 autoScrolling:true,
+				 scrollHorizontally: true,
+				 anchors: ['firstPage', 'secondPage', 'thirdPage'],
+				 menu: '#menu'
+			 });
       $('#login').show();
       $('#loggedin').hide();
       //this.signedOutCard.style.display = 'block';
