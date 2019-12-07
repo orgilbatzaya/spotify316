@@ -205,6 +205,7 @@ async function pullData(spotifyID,access_token){
   const topArtists = topArtistData.body.items;
   // console.log("TOP ARTISTS RETRIEVED ",topArtistData.body);
   // console.log(topArtists.length);
+
  
   var artistList = [];
   for(var k = 0; k < topArtists.length; k++){
