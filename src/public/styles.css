@@ -37,14 +37,6 @@ body{
 	position: relative;
     z-index:1;
 }
-/*
-.navbar-nav > li > a:hover {
-   background-color:rgba(255, 99, 71, 0.5);
-}
-
-.navbar-nav > li > a:active {
-   background-color:rgba(255, 99, 71, 0.5);
-} */
 
 .navbar-nav > li > a:hover {
    background-image: linear-gradient(#ff4bcb, #ff4bcb);
@@ -126,22 +118,7 @@ body{
   text-decoration: none;
   color: #333;
 }
- /*
-.tab-button-two:hover ~ hr {
-  margin-left: 25%;
-  background: orange;
-}
 
-.tab-button-three:hover ~ hr {
-  margin-left: 50%;
-  background: yellow;
-}
-
-.tab-button-four:hover ~ hr {
-  margin-left: 75%;
-  background: red;
-} 
-*/
 .tab-button-one.current ~ hr, ul li.tab-button-one:hover ~ hr {
   margin-left: 0%;
 }
