@@ -219,6 +219,7 @@ function pullData(){
     });
     }
   });
+}
 
 /**
  * Creates a Firebase account with the given user profile and returns a custom auth token allowing
