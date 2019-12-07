@@ -54,11 +54,14 @@ app.set('view engine', 'ejs');
 app.get('/matches', function(req, res) {
 
 	var users = [];
+	
 
 	db.collection('users').get()
 		.then(snapshot => {
+		console.log(snapshot);
 			snapshot.forEach(doc => {
-				var person = doc.data().user;
+				var person = doc.data();
+				console.log(person);
 				users.push(person);
 			});
 			res.render('matches', {
