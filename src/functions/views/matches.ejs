@@ -1,40 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Discover</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <title>Match</title>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<link rel="stylesheet" type="text/css" href="./../styles.css">
 
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!--  scripts for general website format-->  
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-  <link rel="stylesheet" type="text/css" href="./../styles.css">
+    <!--   	handlebars for templating-->   
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.2/handlebars.js"></script> 
+	 <script src="./handlebars.js"></script> <!-- helper function here -->
 
+	
+	  <!-- Icons -->
+	  <script src="https://kit.fontawesome.com/862904df26.js"></script>
 </head>
 <body>
-  <nav class="navbar navbar-default fixed-top">
-      <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#">LOGO</a>
-      </div>
-      <ul class="nav navbar-nav navbar-right">
-        <li class="active"><a href="./matches" style="color: white !important">Matches</a></li>
-        <li><a href="#" style="color: white !important">Discover</a></li>
-        <li><a href="#" style="color: white !important"><i class="fas fa-user" style="color: white"></i> Profile</a></li>
-        <li><a href="#"><i class="fas fa-comment-dots" style="color: white"></i></a></li>
-        <li><a href="#"><i class="fas fa-bell" style="color: white"></i></a></li>
-      </ul>
-      </div>
+  <nav class="navbar navbar-default navbar-expand-lg fixed-top">
+      <a class="navbar-brand" href="#">Spotify316</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-reorder" style="color:white"></i>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNav">
+		  <ul class="navbar-nav ml-auto">
+			<li class="nav-item active"><a class="nav-link" href="./matches" style="color: white !important">Matches</a></li>
+			<li class="nav-item"><a class="nav-link" href="#" style="color: white !important">Discover</a></li>
+			<li class="nav-item"><a class="nav-link" href="#" style="color: white !important"><i class="fas fa-user" style="color: white"></i> Profile</a></li>
+			<li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-comment-dots" style="color: white"></i></a></li>
+			<li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell" style="color: white"></i></a></li>
+		  </ul>		  
+	  </div>
     </nav>
-  <h1>Matches</h1>
-  
-
-  <ul>
-    <% users.forEach(function(user) { %>
-        <li><%= user.Name %> - <%= user.Email %></li>
-        <button type="button" name="follow" class="btn btn-lightred btn-primary">Follow</button>
-
-    <% }); %>
-</ul>
-
+	
+	<div class="center-pane-margin">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<h1>Find your musical match!</h1>
+					<div class="card-deck">
+						<% users.forEach(function(user) { %>
+						<div class="card">
+					<!--		<img class="card-img-top" src="" alt="Card image cap">  -->
+							<div class="card-body">
+								<h5 class="card-title"><%= user.name %></h5>
+								<p class="card-text"><%= user.email %></p>
+								<button type="button" name="follow" class="btn btn-lightred btn-primary">Follow</button>
+							</div>
+						</div>
+						<% }); %>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
 
   <script>
     var users = "<%= users %>";
@@ -91,5 +114,11 @@
     }, false);
     
   </script>
+	<!-- Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	
+	<script type="text/javascript" src="login.js"></script> 
 </body>
 </html>
