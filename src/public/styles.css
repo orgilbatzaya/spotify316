@@ -9,7 +9,7 @@ body{
 }
 
 .center-pane-margin{
-	margin-top: 50px!important;
+	margin-top: 100px !important;
 }
 
 #login, #loggedin {
@@ -29,8 +29,8 @@ body{
 
 .navbar-default{
 	margin: 0px !important;
-	padding-left: 80px;
-    padding-right: 80px;
+	padding-left: 80px !important;
+    padding-right: 80px !important;
 	background-color: red; /* For browsers that do not support gradients */
 	background-image: linear-gradient(to right, #ffda23 , #ff2323, #FF23C0) !important; /* Standard syntax (must be last) */
 	color: white !important;
@@ -51,11 +51,11 @@ body{
 }
 
 .navbar-nav > li > a:active {
-   background-image: linear-gradient(rgba(255,0,0,0), rgba(255,0,0,1));
+   background-image: linear-gradient(#ff4bcb, #ff4bcb);
 }
 
 .navbar-nav > li > a:focus {
-   background-image: linear-gradient(#ab23ff, #ab23ff);
+   background-image: linear-gradient(#ff4bcb, #ff4bcb);
 }
 
 
