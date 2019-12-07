@@ -26,18 +26,14 @@ const Spotify = new SpotifyWebApi({
 const OAUTH_SCOPES = ['user-read-private', 'user-read-email', 'user-top-read','user-read-recently-played',
           'user-library-read','user-follow-read','user-follow-modify'];
 
-// var client_id = 'c78526ebdf26433cbb293f2dc1fa32e6';//'efa17a8f851d4bea93553ea7e2610eb0'; // Your client id
-// var client_secret = '7a6b0c4952c74b4293813ceb82046092';//'27a6fe62777a4de6855b83f62e1367a0'; // Your secret
-// var redirect_uri = 'http://localhost:5000/callback';//'https://spotify316-40ea2.firebaseapp.com/callback'; // 'Your redirect uri
 
 
 var global_access_tok = '';
 var spotify_id = ''
 
-
 function createFirebaseToken(spotifyID) {
   // The uid we'll assign to the user.
-  const uid = `spotify:${spotifyID}`;
+  const uid = `${spotifyID}`;
   // Create the custom token.
   return admin.auth().createCustomToken(uid);
 }
@@ -90,137 +86,179 @@ app.get('/home', function(req,res) {
   pullData();
 })
 
-function pullData(){
-  //var access_token = global_access_tok;
-  console.log(admin.auth().getCurrentUser().uid);
-  console.log("PLEASE");
-  console.log(access_token);
-  //************USER INFO REQUEST************//
+
+
+async function pullData(spotifyID,access_token){  
+  //************USER INFO UPDATE************//
   // use the access token to access the Spotify Web API
   // put user profile info in database
-  var profile = {
-    url: 'https://api.spotify.com/v1/me',
-    headers: { 'Authorization': 'Bearer ' + access_token },
-    json: true
-  };
-  request.get(profile, function(error, response, body) {
-    var user = body;
-    var uid = user.id;
-    // reformat user JSON object when storing in firebase
-    var user_info_text ='{"Name":"' + user.display_name +'",' +
-    '"User ID":"' + user.id +'",' +
-    '"Email":"' + user.email +'",' +
-    '"Country":"' + user.country +'"}';
-    var user_info = JSON.parse(user_info_text);
-    // create new doc in Firebase with Spotify uid as doc name 
-    db.collection("users").doc(uid.toString()).set({
-      user: user_info,
-      playlists: "",
-      tracks: "",
-      audio_features: ""
-    })
-    .then(function() {
-      console.log("User created " + uid);
-    })
-    .catch(function(error) {
-     console.error("Error adding document: ", error);
-   });
-  });
+  const uid = `${spotifyID}`;
+  await admin.database().ref(`/spotifyAccessToken/${uid}`).set(access_token);
+
+  Spotify.getMe(async (error,userResults) => {
+      if(error){
+        throw error;
+      }
+      console.log('user received: ',userResults);  
+      console.log('user id: ',uid);      
+    
+      const followers = userResults.body['followers'];
+      db.collection("users").doc(uid).update({
+        followers: followers
+      })
+      .then(function() {
+        console.log("user successfully updated!");
+      })
+      .catch(function(error) {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
+      });
+    });
   //************PLAYLIST REQUEST************//
 
-  // playlist request endpoint
-  var playlist = {
-    url: 'https://api.spotify.com/v1/me/playlists',
-    headers: { 'Authorization': 'Bearer ' + access_token },
-    json: true
-  };
-
-  var playlists;
-  
-  track_features = [];
-  // put user playlist info in database
-  // request all of user's playlists
-  request.get(playlist, function(error, response, body) {
-    console.log("here is the playlist");
-    playlists = body.items;
-
-    // Iterate through playlists
-    for (i = 0; i < playlists.length; i++) {
-      (function(){
-        var track_names = [];
-        var playlist_id = playlists[i].id; 
-        var name = playlists[i].name;
-        console.log(playlists[i].name)
-        console.log("*******************")
-
-      // playlist track request endpoint
-      var req_url = "https://api.spotify.com/v1/playlists/"+ playlist_id +"/tracks"
-      var playlist_track_request = {
-        url: req_url,
-        headers: { 'Authorization': 'Bearer ' + access_token },
-        json: true };
-
-        db.collection("users").doc(uid).collection("playlist").doc(name).set({
-          tracks: ""
-        }).then(function() {
-          console.log(name + "This is Karen's work");
-        });
-
-      // request tracks from a playlist
-      request.get(playlist_track_request, function(error, response, body) {
-        var playlist_tracks = body.items;
-        // Iterate through tracks to get track names and track features
-        for(j = 0; j < playlist_tracks.length; j++){
-          // store track names in array
-          var track_id = playlist_tracks[j].track.id;
-          track_names.push(playlist_tracks[j].track.name);
-
-
-          //************AUDIO FEATURES REQUEST************//
-
-          var features_req = {
-            url: 'https://api.spotify.com/v1/audio-features/' + track_id,
-            headers: { 'Authorization': 'Bearer ' + access_token },
-            json: true
-          };
-
-          // note that when storing the features of each track in an array, then storing the array
-          // in a firebase field, that database.collection command must be INSIDE the requests.get
-          // function, even if it's nested within the for loop that goes through each track.
-          // same case for storing track names.
-
-          // request track features
-          request.get(features_req, function(error, response, body) {
-            var features = body;
-            track_features.push(features);
-            // add audio features for each of user's tracks to field 'audio_features'
-            db.collection("users").doc(uid).update({
-              audio_features: track_features
-            }).then(function() {
-              //console.log("User audio features updated " + uid);
-            });
-          });
-
-          db.collection("users").doc(uid).collection("playlist").doc(name).update({
-            tracks: track_names,
-            info: playlists
-          }).then(function() {
-            console.log("User tracks updated " + uid);
-          });
-        }
-
-        // add list of track names to firebase to field 'tracks'
-        
-
-
-      });
-
-      //hre
-    });
+  const playData = await Spotify.getUserPlaylists({ limit : 3 });
+  const playlists = playData.body.items;
+  console.log('Retrieved playlists');
+      
+  for(var i = 0; i < playlists.length; i++){
+    var agg_features = {
+      acousticness:0,
+      danceability:0,
+      energy:0,
+      instrumentalness:0,
+      speechiness:0,
+      valence:0 
     }
-  });
-}
+    var playlistName = playlists[i].name;
+    var playlistID = playlists[i].id;
+    console.log('retrieved playlist: ',playlistName);
+    
+    var tracksData = await Spotify.getPlaylistTracks(playlistID,{ limit : 20 });
+    var tracks = tracksData.body.items;
+    for(var j = 0; j < tracks.length; j++){
+      var trackID = tracks[j].track.id;
+      var features;
+      var data = await Spotify.getAudioFeaturesForTrack(trackID);
+      features = data.body;
+      agg_features.acousticness += features.acousticness;
+      agg_features.danceability += features.danceability;
+      agg_features.energy += features.energy;
+      agg_features.instrumentalness += features.instrumentalness;
+      agg_features.speechiness += features.speechiness;
+      agg_features.valence += features.valence;
+    }
+    for (let key in agg_features) {
+      agg_features[key] = agg_features[key]/tracks.length;
+      console.log(key, agg_features[key]);
+    }
 
+    await db.collection("playlists").doc(playlistID).set({
+      name: playlistName,
+      owner: spotifyID,
+      agg_features: agg_features
+    });
+    console.log("playlist saved " + playlistName);
+
+  }
+  //************TOP TRACKS REQUEST************//
+  const topTrackData = await Spotify.getMyTopTracks({ limit : 10 });
+  const topTracks = topTrackData.body.items;
+  // console.log("TOP TRACKS RETRIEVED ",topTrackData.body);
+  // console.log(topTracks.length);
+  var agg_features = {
+      acousticness:0,
+      danceability:0,
+      energy:0,
+      instrumentalness:0,
+      speechiness:0,
+      valence:0 
+  }
+  var trackList = [];
+  for(var k = 0; k < topTracks.length; k++){
+    var trackID = topTracks[k].id;
+    var trackName = topTracks[k].name;
+    var artist = topTracks[k].artists;
+    var data = await Spotify.getAudioFeaturesForTrack(trackID);
+    var features = data.body;
+    agg_features.acousticness += features.acousticness;
+    agg_features.danceability += features.danceability;
+    agg_features.energy += features.energy;
+    agg_features.instrumentalness += features.instrumentalness;
+    agg_features.speechiness += features.speechiness;
+    agg_features.valence += features.valence;
+    trackList.push({id:trackID,name:trackName,artist:artist});
+  }
+  for (let key in agg_features) {
+    agg_features[key] = agg_features[key]/topTracks.length;
+    //console.log(key, agg_features[key]);
+  }
+
+  await db.collection("toptracks").doc(uid).set({
+    tracks:trackList,
+    agg_features: agg_features
+  });
+  console.log("TOP TRACKS SAVED ");
+
+   //************TOP ARTISTS REQUEST************//
+
+  const topArtistData = await Spotify.getMyTopArtists({ limit : 10 });
+  const topArtists = topArtistData.body.items;
+  // console.log("TOP ARTISTS RETRIEVED ",topArtistData.body);
+  // console.log(topArtists.length);
+ 
+  var artistList = [];
+  for(var k = 0; k < topArtists.length; k++){
+    var artistName = topArtists[k].name;
+    artistList.push(artistName);
+  }
+ 
+  await db.collection("topartists").doc(uid).set({
+    artists:artistList,
+  });
+  console.log("TOP ARTISTS SAVED ");
+
+  //************RECENTLY PLAYED REQUEST************//
+
+  const recentTrackData = await Spotify.getMyRecentlyPlayedTracks({ limit : 10 });
+  const recentTracks = recentTrackData.body.items;
+  // console.log("RECENT TRACKS RETRIEVED ",recentTrackData.body);
+  // console.log(recentTracks.length);
+  var agg_features = {
+      acousticness:0,
+      danceability:0,
+      energy:0,
+      instrumentalness:0,
+      speechiness:0,
+      valence:0 
+  }
+  var trackList = [];
+  for(var k = 0; k < recentTracks.length; k++){
+    var trackID = recentTracks[k].track.id;
+    var trackName = recentTracks[k].track.name;
+    var artist = recentTracks[k].track.artists;
+    var data = await Spotify.getAudioFeaturesForTrack(trackID);
+    var features = data.body;
+    agg_features.acousticness += features.acousticness;
+    agg_features.danceability += features.danceability;
+    agg_features.energy += features.energy;
+    agg_features.instrumentalness += features.instrumentalness;
+    agg_features.speechiness += features.speechiness;
+    agg_features.valence += features.valence;
+    trackList.push({id:trackID,name:trackName,artist:artist});
+  }
+  for (let key in agg_features) {
+    agg_features[key] = agg_features[key]/recentTracks.length;
+    //console.log(key, agg_features[key]);
+  }
+
+  await db.collection("recenttracks").doc(uid).set({
+    tracks:trackList,
+    agg_features: agg_features
+  });
+  console.log("RECENT TRACKS SAVED ");
+}
+          
+  
 /**
  * Creates a Firebase account with the given user profile and returns a custom auth token allowing
  * signing-in this account.
@@ -228,60 +266,68 @@ function pullData(){
  *
  * @returns {Promise<string>} The Firebase custom auth token in a promise.
  */
-async function createFirebaseAccount(spotifyID, displayName, photoURL, email, accessToken) {
+async function createFirebaseAccount(spotifyID, displayName, profilePic, email, followers, accessToken) {
   // The UID we'll assign to the user.
-  const uid = `spotify:${spotifyID}`;
+  const uid = `${spotifyID}`;
 
   // Save the access token to the Firebase Realtime Database.
   const databaseTask = admin.database().ref(`/spotifyAccessToken/${uid}`).set(accessToken);
 
   // Create or update the user account.
-  const userCreationTask = admin.auth().updateUser(uid, {
-    displayName: displayName,
-    photoURL: photoURL,
-    email: email,
-    emailVerified: true,
-  }).catch((error) => {
-    // If user does not exists we create it.
-    if (error.code === 'auth/user-not-found') {
-      return admin.auth().createUser({
-        uid: uid,
-        displayName: displayName,
-        photoURL: photoURL,
-        email: email,
-        emailVerified: true,
-      });
-    }
-    throw error;
-  });
+  // const userCreationTask = admin.auth().updateUser(uid, {
+  //   displayName: displayName,
+  //   profilePic: profilePic.url,
+  //   email: email,
+  //   emailVerified: true,
+  // }).catch((error) => {
+  //   // If user does not exists we create it.
+  //   if (error.code === 'auth/user-not-found') {
+  //     return admin.auth().createUser({
+  //       uid: uid,
+  //       displayName: displayName,
+  //       profilePic: profilePic.url,
+  //       email: email,
+  //       emailVerified: true,
+  //     });
+  //   }
+  //   throw error;
+  // });
+
+  const firestoreUserTask = db.collection("users").doc(uid).set({
+      name: displayName,
+      image: profilePic.url,
+      email: email,
+      followers: followers,
+    })
+    .then(function() {
+      console.log("User created " + uid);
+    })
+    .catch(function(error) {
+     console.error("Error adding document: ", error);
+   });
 
   // Wait for all async tasks to complete, then generate and return a custom auth token.
-  await Promise.all([userCreationTask, databaseTask]);
+  await Promise.all([databaseTask, firestoreUserTask]);
   // Create a Firebase custom auth token.
   const token = await admin.auth().createCustomToken(uid);
   console.log('Created Custom token for UID "', uid, '" Token:', token);
   return token;
 }
 
-/**
- * Redirects the User to the Spotify authentication consent screen. Also the 'state' cookie is set for later state
- * verification.
- */
-exports.redirect = functions.https.onRequest((req,res) => {
-  cookieParser()(req,res, () => {
+
+app.get('/redirect', function(req, res) {
+cookieParser()(req,res, () => {
     const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
     res.cookie(stateKey,state.toString());
     const authorizeURL = Spotify.createAuthorizeURL(OAUTH_SCOPES,state.toString());
-    console.log(Spotify.getRedirectURI());
+    //console.log(Spotify.getRedirectURI());
 
     res.redirect(authorizeURL);
   });
+  
 });
 
-
-
-
-exports.token = functions.https.onRequest((req,res) => {
+app.get('/token', function(req, res) {
   try{
     cookieParser()(req,res,() => {
       console.log('Received verification state: ', req.cookies[stateKey]);
@@ -309,14 +355,16 @@ exports.token = functions.https.onRequest((req,res) => {
           const accessToken = data.body['access_token'];
           const refreshToken = data.body['refresh_token'];
           const spotifyUserID = userResults.body['id'];
-          const profilePic = userResults.body['images'][0]['url'];
+          const profilePic = userResults.body['images'][0] ? userResults.body['images'][0] : "none";
           const userName = userResults.body['display_name'];
           const email = userResults.body['email'];
+          const followers = userResults.body['followers'];
 
           // Create a Firebase account and get the Custom Auth Token.
-          const firebaseToken = await createFirebaseAccount(spotifyUserID, userName, profilePic, email, accessToken);
+          const firebaseToken = await createFirebaseAccount(spotifyUserID, userName, profilePic, email, followers,accessToken);
           // Serve an HTML page that signs the user in and updates the user profile.
-          spotify_id = spotifyUserID;
+          //pullData(accessToken,spotifyUserID);
+          await pullData(spotifyUserID,accessToken);
           res.jsonp({token: firebaseToken});
 
           
@@ -329,9 +377,8 @@ exports.token = functions.https.onRequest((req,res) => {
     return res.jsonp({error:error.toString});
   }
   return null;
+  
 });
-
-
 
 
 app.get('/refresh_token', function(req, res) {
