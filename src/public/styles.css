@@ -9,7 +9,7 @@ body{
 }
 
 .center-pane-margin{
-	margin-top: 50px!important;
+	margin-top: 100px !important;
 }
 
 #login, #loggedin {
@@ -29,34 +29,25 @@ body{
 
 .navbar-default{
 	margin: 0px !important;
-	padding-left: 80px;
-    padding-right: 80px;
+	padding-left: 80px !important;
+    padding-right: 80px !important;
 	background-color: red; /* For browsers that do not support gradients */
 	background-image: linear-gradient(to right, #ffda23 , #ff2323, #FF23C0) !important; /* Standard syntax (must be last) */
 	color: white !important;
 	position: relative;
     z-index:1;
-	border-color: green;
 }
-/*
-.navbar-nav > li > a:hover {
-   background-color:rgba(255, 99, 71, 0.5);
-}
-
-.navbar-nav > li > a:active {
-   background-color:rgba(255, 99, 71, 0.5);
-} */
 
 .navbar-nav > li > a:hover {
    background-image: linear-gradient(#ff4bcb, #ff4bcb);
 }
 
 .navbar-nav > li > a:active {
-   background-image: linear-gradient(rgba(255,0,0,0), rgba(255,0,0,1));
+   background-image: linear-gradient(#ff4bcb, #ff4bcb);
 }
 
 .navbar-nav > li > a:focus {
-   background-image: linear-gradient(#ab23ff, #ab23ff);
+   background-image: linear-gradient(#ff4bcb, #ff4bcb);
 }
 
 
@@ -127,22 +118,7 @@ body{
   text-decoration: none;
   color: #333;
 }
- /*
-.tab-button-two:hover ~ hr {
-  margin-left: 25%;
-  background: orange;
-}
 
-.tab-button-three:hover ~ hr {
-  margin-left: 50%;
-  background: yellow;
-}
-
-.tab-button-four:hover ~ hr {
-  margin-left: 75%;
-  background: red;
-} 
-*/
 .tab-button-one.current ~ hr, ul li.tab-button-one:hover ~ hr {
   margin-left: 0%;
 }
@@ -167,4 +143,39 @@ hr {
   background: #ffda23 !important;
   border: none;
   transition: .3s ease-in-out;
+}
+
+/* loader source: https://loading.io/css/ */
+
+.lds-ripple {
+  display: inline-block;
+  position: relative;
+  width: 200px;
+  height: 200px; 
+}
+.lds-ripple div {
+  position: absolute; 
+  border: 4px solid #FF23C0;
+  opacity: 1;
+  border-radius: 50%;
+  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+.lds-ripple div:nth-child(2) {
+  animation-delay: -0.5s;
+}
+@keyframes lds-ripple {
+  0% {
+    top: 100px;
+    left: 100px;
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    top: 0px;
+    left: 0px;
+    width: 200px;
+    height: 200px;
+    opacity: 0;
+  }
 }
