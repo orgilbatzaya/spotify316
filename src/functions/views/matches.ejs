@@ -30,7 +30,7 @@
 		  <ul class="navbar-nav ml-auto">
 			<li class="nav-item active"><a class="nav-link" href="./matches" style="color: white !important">Matches</a></li>
 			<li class="nav-item"><a class="nav-link" href="#" style="color: white !important">Discover</a></li>
-			<li class="nav-item"><a class="nav-link" href="#" style="color: white !important"><i class="fas fa-user" style="color: white"></i> Profile</a></li>
+			<li class="nav-item"><a class="nav-link" href="/index.html" style="color: white !important"><i class="fas fa-user" style="color: white"></i> Profile</a></li>
 			<li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-comment-dots" style="color: white"></i></a></li>
 			<li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell" style="color: white"></i></a></li>
 		  </ul>		  
@@ -45,7 +45,7 @@
 					<div class="card-deck">
 						<% users.forEach(function(user) { %>
 						<div class="card">
-					<!--		<img class="card-img-top" src="" alt="Card image cap">  -->
+							<img class="card-img-top" src="<%= user.image %>" alt="Card image cap"> 
 							<div class="card-body">
 								<h5 class="card-title"><%= user.name %></h5>
 								<p class="card-text"><%= user.email %></p>
