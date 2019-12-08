@@ -25,12 +25,12 @@
 
     </body>
 
-    <input type="number" value=1 id="chart_acousticness">
-    <input type="number" value=1 id="chart_danceability">
-    <input type="number" value=1 id="chart_energy">
-    <input type="number" value=1 id="chart_instrumentalness">
-    <input type="number" value=1 id="chart_speechiness">
-    <input type="number" value=1 id="chart_valence">
+    <input id="chart_acousticness" type="hidden" value=1>
+    <input id="chart_danceability" type="hidden" value=1>
+    <input id="chart_energy" type="hidden" value=1>
+    <input id="chart_instrumentalness" type="hidden" value=1>
+    <input id="chart_speechiness" type="hidden" value=1>
+    <input id="chart_valence" type="hidden" value=1>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script>
@@ -41,7 +41,7 @@
                 labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
                 datasets: [{
                     label: 'Average Playlist Qualities',
-                    data: [document.getElementById("chart_acousticness").value, document.getElementById("chart_danceability").value, document.getElementById("chart_energy").value, document.getElementById("chart_instrumentalness").value, document.getElementById("chart_speechiness").value, document.getElementById("chart_valence").value],
+                    data: [document.getElementById("chart_acousticness"), document.getElementById("chart_danceability"), document.getElementById("chart_energy"), document.getElementById("chart_instrumentalness"), document.getElementById("chart_speechiness"), document.getElementById("chart_valence")],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
