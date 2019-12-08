@@ -3,12 +3,14 @@ var userProfileTemplate = Handlebars.getTemplate("user-profile-template");
 var topArtistsTemplate = Handlebars.getTemplate('top-artists-template');
 var topTracksTemplate = Handlebars.getTemplate('top-tracks-template');
 
-
 function Demo(){
   document.addEventListener('DOMContentLoaded', function() {
     this.signInButton = document.getElementById('sign-in-button');
     this.signInButtonTop = document.getElementById('sign-in-button-top');
     this.signOutButton = document.getElementById('sign-out-button');
+    this.recentButton = document.getElementById('tab-button-one');
+    this.artistButton = document.getElementById('tab-button-two');
+    // this.playlistButton = document.getElementById('tab-button-three');
 
     // this.signedOutCard = document.getElementById('demo-signed-out-card');
     // this.signedInCard = document.getElementById('demo-signed-in-card');
@@ -26,12 +28,18 @@ function Demo(){
     this.signInButtonTop.addEventListener('click', this.signIn.bind(this));
     this.signOutButton.addEventListener('click', this.signOut.bind(this));
     this.playlists.addEventListener('click', this.analyzePlaylists.bind(this));
-
+    
+    //chart event listeners
+    this.recentButton.addEventListener('click', this.recentChart.bind(this));
+    //this.artistButton.addEventListener('click', this.artistChart.bind(this));
+    // this.playlistButton.addEventListener('click', this.playlistButton.bind(this));
 
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged.bind(this));
 
   }.bind(this))
 }
+
+
 
 // Triggered on Firebase auth state change.
 Demo.prototype.onAuthStateChanged = async function(user) {
@@ -121,7 +129,6 @@ Demo.prototype.analyzePlaylists = function() {
             console.log(stuff[i].name);
             myPlaylists += stuff[i].name + ' ';
           }
-
           playlistsBottom.innerText = myPlaylists;
 
       } else {
@@ -134,252 +141,62 @@ Demo.prototype.analyzePlaylists = function() {
   //TODO: fully parse playlists and generate visuals using chartjs
 };
 
-//creates charts
-Demo.prototype.createChart = function() {
-  var dataArr = [];
-  var previousVal = '';
-  var compareVal ='';
-  var chartCount;
-  var currentFnD='';
-  var ref = firebase.database().ref().orderByChild("foodAndDrinks");
+//recent tracks data visualization
+Demo.prototype.recentChart = function() {
 
-  // Get data function reads the firebase database. Order the data by Child of key foodAndDrinks
-  // It then traverses each value in the firebase and 
-  // for each record compares if the current value and previous value are same cuisine increments by 1 
-  // until all records of that type are counted. 
 
-  // If the search did not include a search for Restaurant or Cuisine then it ignores that record and resets
-  // counter to 1. If the values current and previous values do not match. 
-  // We set add the 'label and 'value' into an array and set the previousVal to current value of cuisine.
-//   function getData() {
-      
-//       ref.on("child_added", function (snapshot) {
-//           var obj = snapshot.val();
-//           currentFnd=obj.foodAndDrinks;
-//           if (currentFnd === previousVal && typeof obj.foodAndDrinks !=='undefined') {
-//               chartCount++;
-//               //currentFnD=obj.foodAndDrinks;
-//           }
-//           else if(typeof obj.foodAndDrinks ==='undefined' || obj.foodAndDrinks === ''){
-//               console.log(chartCount, obj.label);
-//               chartCount=0;
-//           }
-//           else if (currentFnd !== previousVal && typeof obj.foodAndDrinks !=='undefined'  || obj.foodAndDrinks !== ' ' || obj.foodAndDrinks !== "null") {
-//               chartCount++;
-//               dataArr = ({
-//                   label: previousVal,
-//                   value: chartCount,
-//               });
-          
-//               chartCount = 0;
-//               previousVal = obj.foodAndDrinks;
-//               //currentFnd=obj.foodAndDrinks;
-//           }
-      
-//         // Verify that values are defined and push data into the chart    
-//           if(typeof dataArr.label !== 'undefined' && typeof dataArr.value !=='undefined'){
-//              if(dataArr.label !== compareVal){
-//                   addData(myChart, dataArr.label, dataArr.value);
-//                   compareVal = dataArr.label;
-//              }     
-             
-              
-//           }
-          
-//           // var unique = $.makeArray($(dataArr).filter(function(i,itm){
-//           //     return i == $(dataArr).index(itm);
-//           // })); 
+  console.log("you've clicked #1");
+  var user = firebase.auth().currentUser;
+  var uid = user.uid;
+  var db = firebase.firestore();
 
-//       });
+  
+  console.log(uid);
 
-//   }
+	db.collection('recenttracks').doc(uid).get().then((docRef) => {
+    
+    
+    console.log(docRef.data().agg_features);
+    users.push(docRef.data().agg_features['acousticness']);
+    users.push(docRef.data().agg_features['danceability']);
+    users.push(docRef.data().agg_features['energy']);
+    users.push(docRef.data().agg_features['instrumentalness']);
+    users.push(docRef.data().agg_features['speechiness']);
+    users.push(docRef.data().agg_features['valence']);
 
-//   window.chartColors = {
-//       red: 'rgb(255, 99, 132)',
-//       orange: 'rgb(255, 159, 64)',
-//       yellow: 'rgb(255, 205, 86)',
-//       green: 'rgb(75, 192, 192)',
-//       blue: 'rgb(54, 162, 235)',
-//       purple: 'rgb(153, 102, 255)',
-//       grey: 'rgb(201, 203, 207)'
-//   };
-// // Initialize the Chart Element on HTML 
-//   var ctx = document.getElementById("myChart").getContext("2d");
-//   options = {
-//       scales: {
-//           xAxes: [{
-//               barPercentage: 0.5,
-//               barThickness: 6,
-//               maxBarThickness: 8,
-//               minBarLength: 2,
-//               gridLines: {
-//                   offsetGridLines: true
-//               },
-//               yAxes: [{
-//                   ticks: {
-//                       min: 0,
-//                       max: 100,
-//                       stepSize: 10
-//                   }
-//               }]
-//           }],
-//           layout: {
-//               padding: {
-//                   left: 50,
-//                   right: 0,
-//                   top: 0,
-//                   bottom: 0
-//               }
-//           }
-//       }
-//   }
-//   // Set the configuration of the Chart elements.
-//   // This is where we pass the data we captured from firebase to the chart label and data
-//   var config = {
-//       type: 'line',
-//       data: {
-//           labels: dataArr.label,       // value of label retrieved from firebase
-//           datasets: [{
-//               label: "User Views by Cuisine",
-//               backgroundColor: "rgb(255, 159, 64)",
-//               borderColor: "rgba(54, 162, 235, 1)",
-//               borderWidth: 1,
-//               data: dataArr.value     // value of search for each of the array elements
-//           }],
-//           responsive: true,
-//           options: options
+    console.log(users);
+    })
+    .catch(function(error) {
+      console.log("Error getting documents: ", error);
+  });
 
-//       }
-//   };
+  var ctx = document.getElementById("chart-area").getContext('2d');
 
-//   // Create new chart element context with refrence to the HTML element
-//   var myChart = new Chart(ctx, config);
+  var myChart = new Chart(ctx, {
+    type: 'polarArea',
+    data: {
+      labels: ["acousticness", "danceability", "energy", "instrumentalness", " spechiness", "valence"],
+      datasets: [
+        {
+          label: "Population (millions)",
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+          data: users
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Predicted world population (millions) in 2050'
+      }
+    }
+  });
+};
 
- 
-//   // Put data into the dataset for the chart and update the chart
-//   function addData(chart, label, data) {
-//       chart.data.labels.push(label);
-//       chart.data.datasets.forEach((dataset) => {
-//           dataset.data.push(data);
-//       });
-//       chart.update();
-//   }
-//   // Call the function which initiates the chart setup
-//   getData();
-}
+
+Demo.prototype.artistChart = function() {
+  console.log("You've clicked button #2");
+};
+
 
 new Demo();
-
-// $(document).ready(function() {
-
-//         /**
-//          * Obtains parameters from the hash of the URL
-//          * @return Object
-//          */
-//         function getHashParams() {
-//           var hashParams = {};
-//           var e, r = /([^&;=]+)=?([^&;]*)/g,
-//               q = window.location.hash.substring(1);
-//           while ( e = r.exec(q)) {
-//              hashParams[e[1]] = decodeURIComponent(e[2]);
-//           }
-//           return hashParams;
-//         }
-//         var userProfileTemplate = Handlebars.getTemplate("user-profile-template"),
-//             userProfilePlaceholder = document.getElementById('user-profile');
-
-//         var topArtistsTemplate = Handlebars.getTemplate('top-artists-template'),
-//             topArtistsPlaceholder = document.getElementById('topartists');
-	
-// 		var topTracksTemplate = Handlebars.getTemplate('top-tracks-template'),
-//             topTracksPlaceholder = document.getElementById('toptracks');
-
-//         var oauthTemplate = Handlebars.getTemplate('oauth-template'),
-//             oauthPlaceholder = document.getElementById('oauth');
-
-//         var params = getHashParams();
-
-//         var access_token = params.access_token,
-//             refresh_token = params.refresh_token,
-//             error = params.error;
-
-//         if (error) {
-//           alert('There was an error during the authentication');
-//         } else {
-//           if (access_token) {
-//             // render oauth info
-//             oauthPlaceholder.innerHTML = oauthTemplate({
-//               access_token: access_token,
-//               refresh_token: refresh_token
-//             });
-//             console.log(access_token);
-//             $.ajax({
-//                 url: 'https://api.spotify.com/v1/me/top/artists',
-//                 headers: {
-//                   'Authorization': 'Bearer ' + access_token
-//                 },
-//                 success: function(response) {
-//                   topArtistsPlaceholder.innerHTML = topArtistsTemplate(response);
-
-//                   // $('#login').hide();
-//                   // $('#loggedin').show();
-//                   console.log(response);
-
-//                 }
-//             });
-//             console.log(access_token);
-			
-// 			$.ajax({
-//                 url: 'https://api.spotify.com/v1/me/top/tracks',
-//                 headers: {
-//                   'Authorization': 'Bearer ' + access_token
-//                 },
-//                 success: function(response) {
-//                   topTracksPlaceholder.innerHTML = topTracksTemplate(response);
-
-//                   // $('#login').hide();
-//                   // $('#loggedin').show();
-//                   console.log(response);
-
-//                 }
-//             });
-//             console.log(access_token);
-
-//             $.ajax({
-//                 url: 'https://api.spotify.com/v1/me',
-//                 headers: {
-//                   'Authorization': 'Bearer ' + access_token
-//                 },
-//                 success: function(response) {
-//                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-//                     console.log("log in success");
-//                   $('#login').hide();
-//                   $.fn.fullpage.destroy('all');
-//                   $('#loggedin').show();
-
-//                 }
-//             });
-
-//           } else {
-//               // render initial screen
-//               console.log("log in failed!");
-//               $('#login').show();
-//               $('#loggedin').hide();
-//           }
-
-//           document.getElementById('obtain-new-token').addEventListener('click', function() {
-//             $.ajax({
-//               url: '/refresh_token',
-//               data: {
-//                 'refresh_token': refresh_token
-//               }
-//             }).done(function(data) {
-//               access_token = data.access_token;
-//               oauthPlaceholder.innerHTML = oauthTemplate({
-//                 access_token: access_token,
-//                 refresh_token: refresh_token
-//               });
-//             });
-//           }, false);
-//         }
-//       });

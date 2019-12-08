@@ -19,7 +19,7 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const Spotify = new SpotifyWebApi({
   clientId: 'c78526ebdf26433cbb293f2dc1fa32e6',
   clientSecret: '7a6b0c4952c74b4293813ceb82046092',
-  redirectUri: 'http://localhost:5000/popup.html'//'https://spotify316-40ea2.firebaseapp.com/popup.html' // 'Your redirect uri
+  redirectUri: 'http://localhost:9000/popup.html'//'https://spotify316-40ea2.firebaseapp.com/popup.html' // 'Your redirect uri
 
 });
 // Scopes to request.
