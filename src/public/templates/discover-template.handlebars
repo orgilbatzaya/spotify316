@@ -1,40 +1,51 @@
 
+
   <div class="container-fluid" data-aos="fade" data-aos-delay="500">
     <div class="swiper-container images-carousel">
         <div class="swiper-wrapper">
             <div class="swiper-slide">
               <div class="image-wrap">
                 <div class="image-info">
-                  <h2 class="mb-3">{{albums.items.0.name}} by {{albums.items.0.artists.0.name}}</h2>
+                  <h2 class="mb-3">{{playlists.items.1.name}}</h2>
+                  <a href="single.html" class="btn btn-outline-white py-2 px-4">{{playlists.items.1.description}}</a>
                 </div>
-                <img src="{{albums.items.0.images.0.url}}" alt="Image" height="500", width="500">
+                <img src="{{playlists.items.1.images.0.url}}" alt="Image">
               </div>
             </div>
             <div class="swiper-slide">
               <div class="image-wrap">
                 <div class="image-info">
-                  <h2 class="mb-3">{{albums.items.1.name}} by {{albums.items.1.artists.0.name}}</h2>
-                  <a href="single.html" class="btn btn-outline-white py-2 px-4">More Photos</a>
+                  <h2 class="mb-3">{{playlists.items.[0].name}}</h2>
+                  <a href="single.html" class="btn btn-outline-white py-2 px-4">{{playlists.items.[0].description}}</a>
                 </div>
-                <img src="{{albums.items.1.images.0.url}}" alt="Image">
+                <img src="{{playlists.items.[0].images.0.url}}" alt="Image">
               </div>
             </div>
             <div class="swiper-slide">
               <div class="image-wrap">
                 <div class="image-info">
-                  <h2 class="mb-3">{{albums.items.2.name}} by {{albums.items.2.artists.0.name}}</h2>
-                  <a href="single.html" class="btn btn-outline-white py-2 px-4">More Photos</a>
+                  <h2 class="mb-3">{{playlists.items.[2].name}}</h2>
+                  <a href="single.html" class="btn btn-outline-white py-2 px-4">{{playlists.items.[2].description}}</a>
                 </div>
-                <img src="{{albums.items.2.images.0.url}}" alt="Image">
+                <img src="{{playlists.items.[2].images.0.url}}" alt="Image">
               </div>
             </div>
             <div class="swiper-slide">
               <div class="image-wrap">
                 <div class="image-info">
-                  <h2 class="mb-3">{{albums.items.3.name}} by {{albums.items.3.artists.0.name}}</h2>
-                  <a href="single.html" class="btn btn-outline-white py-2 px-4">More Photos</a>
+                  <h2 class="mb-3">{{playlists.items.[3].name}}</h2>
+                  <a href="single.html" class="btn btn-outline-white py-2 px-4">{{playlists.items.[3].description}}</a>
                 </div>
-                <img src="{{albums.items.3.images.0.url}}" alt="Image">
+                <img src="{{playlists.items.[3].images.0.url}}" alt="Image">
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="image-wrap">
+                <div class="image-info">
+                  <h2 class="mb-3">{{playlists.items.[4].name}}</h2>
+                  <a href="single.html" class="btn btn-outline-white py-2 px-4">{{playlists.items.[4].description}}</a>
+                </div>
+                <img src="{{playlists.items.[4].images.0.url}}" alt="Image">
               </div>
             </div>
          
@@ -62,3 +73,4 @@
     
     
   </div>
+
