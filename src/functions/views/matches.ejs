@@ -46,12 +46,16 @@
 						<% users.forEach(function(user) { %>
 <!--						<div class="col-lg-3">-->
 							<div class="card text-center" style="border-radius: 25px; border: 2px solid #FF6C6C; overflow:hidden;">
-								<div style="height: auto; background-color: #FF6C6C; padding: 10px;"><img class="card-img-top profile-img" src="<%= user.image %>" alt=" Profile Image" style="min-height:180px;"></div> 
+								<div style="height: auto; background-color: #FF6C6C; padding: 10px;">
+									<img class="card-img-top profile-img" src="<%= user.image %>" alt=" Profile Image" style="min-height:180px;">
+									<h3 style="color: white; padding-top: 10px;">90%</h3>
+								</div> 
 								<div class="card-body">
 									<h5 class="card-title"><%= user.name %></h5>
 <!--									<p class="card-text"><%= user.email %></p>-->
 									<button type="button" class="btn btn-lightred btn-primary">Compare</button>
-									<button type="button" name="follow" class="btn btn-lightred btn-primary">Follow</button>
+									<button type="button" name="follow" class="btn btn-lightred btn-primary"><i class='fas fa-user-plus' style='color:white'></i>
+</button>
 								</div>
 							</div>	
 <!--						</div>-->
