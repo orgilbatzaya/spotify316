@@ -19,7 +19,7 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const Spotify = new SpotifyWebApi({
   clientId: 'c78526ebdf26433cbb293f2dc1fa32e6',
   clientSecret: '7a6b0c4952c74b4293813ceb82046092',
-  redirectUri: 'http://localhost:5000/popup.html'//'https://spotify316-40ea2.firebaseapp.com/popup.html' // 'Your redirect uri
+  redirectUri: 'http://localhost:9000/popup.html'//'https://spotify316-40ea2.firebaseapp.com/popup.html' // 'Your redirect uri
 
 });
 // Scopes to request.
@@ -358,7 +358,7 @@ app.get('/token', function(req, res) {
           const accessToken = data.body['access_token'];
           const refreshToken = data.body['refresh_token'];
           const spotifyUserID = userResults.body['id'];
-          const profilePic = userResults.body['images'][0] ? userResults.body['images'][0] : "none";
+          const profilePic = userResults.body['images'][0] ? userResults.body['images'][0] : {url:"None"};
           const userName = userResults.body['display_name'];
           const email = userResults.body['email'];
           const followers = userResults.body['followers'];
