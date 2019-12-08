@@ -4,7 +4,6 @@ var oauthTemplate = Handlebars.getTemplate('oauth-template');
 var userProfileTemplate = Handlebars.getTemplate("user-profile-template");
 var topArtistsTemplate = Handlebars.getTemplate('top-artists-template');
 var topTracksTemplate = Handlebars.getTemplate('top-tracks-template');
-var newReleasesTemplate = Handlebars.getTemplate('new-releases-template');
 
 function Demo(){
   document.addEventListener('DOMContentLoaded', function() {
@@ -18,7 +17,6 @@ function Demo(){
     this.topArtistsPlaceholder = document.getElementById('topartists');
     this.topTracksPlaceholder = document.getElementById('toptracks');
     this.oauthPlaceholder = document.getElementById('oauth');
-	this.newReleasesPlaceholder = document.getElementById('newReleases');
 
     this.playlists = document.getElementById('playlists');
     this.playlistsBottom = document.getElementById('playlists-bottom');
@@ -48,7 +46,6 @@ Demo.prototype.onAuthStateChanged = async function(user) {
     var userProfilePlaceholder = this.userProfilePlaceholder;
     var topArtistsPlaceholder = this.topArtistsPlaceholder;
     var topTracksPlaceholder = this.topTracksPlaceholder;
-	var newReleasesPlaceholder = this.newReleasesPlaceholder;
 	  
     localStorage.setItem('access_token', access_token);
 	  
@@ -78,16 +75,6 @@ Demo.prototype.onAuthStateChanged = async function(user) {
         },
         success: function(response) {
           topTracksPlaceholder.innerHTML = topTracksTemplate(response);
-        }
-    });
-	$.ajax({ // fill in users top tracks
-        url: 'https://api.spotify.com/v1/browse/new-releases',
-        headers: {
-          'Authorization': 'Bearer ' + access_token
-        },
-        success: function(response) {
-			console.log(response.albums);
-          newReleasesPlaceholder.innerHTML = newReleasesTemplate(response);
         }
     });
     //this.signedOutCard.style.display = 'none';
