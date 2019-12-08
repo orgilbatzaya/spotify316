@@ -113,29 +113,83 @@ Demo.prototype.signOut = function() {
 
 Demo.prototype.analyzePlaylists = function() {
   var user = firebase.auth().currentUser;
-  var uid = user.uid.split(':')[1];
+  var uid = user.uid;
   var db = firebase.firestore();
-  var docRef = db.collection("users").doc(`${uid}`);
-  var playlistsBottom = this.playlistsBottom;
-
-  docRef.get().then(function(doc) {
-      if (doc.exists) {
-          var stuff = doc.data().playlists;
-          var myPlaylists = '';
-          var myPlaylists = []
-          for(var i = 0; i < stuff.length; i++){
-            console.log(stuff[i].name);
-            myPlaylists += stuff[i].name + ' ';
-          }
-
-          playlistsBottom.innerText = myPlaylists;
-
-      } else {
-      console.log("No such document!");
+  var userPlaylistCount = 0;
+  // This variable includes the average of all playlists' features
+  var userPlaylistsAggFeatures = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  };
+  var docRef = db.collection('playlists').get().then(function(querySnapshot){
+    querySnapshot.forEach(function(doc){
+      //console.log(doc.id, '=>', doc.data());
+      if (doc.data().owner == uid){
+        // Add together aggregate data features, and keep a counter to divide by total number
+        userPlaylistsAggFeatures.acousticness += doc.data().agg_features.acousticness;
+        userPlaylistsAggFeatures.danceability += doc.data().agg_features.danceability;
+        userPlaylistsAggFeatures.energy += doc.data().agg_features.energy;
+        userPlaylistsAggFeatures.instrumentalness += doc.data().agg_features.instrumentalness;
+        userPlaylistsAggFeatures.speechiness += doc.data().agg_features.speechiness;
+        userPlaylistsAggFeatures.valence += doc.data().agg_features.valence;
+        userPlaylistCount += 1;
       }
-  }).catch(function(error) {
-      console.log("Error getting document:", error);
+    })
+    // Divide by number of user playlists
+    userPlaylistsAggFeatures.acousticness /= userPlaylistCount;
+    userPlaylistsAggFeatures.danceability /= userPlaylistCount;
+    userPlaylistsAggFeatures.energy /= userPlaylistCount;
+    userPlaylistsAggFeatures.instrumentalness /= userPlaylistCount;
+    userPlaylistsAggFeatures.speechiness /= userPlaylistCount;
+    userPlaylistsAggFeatures.valence /= userPlaylistCount;
+    console.log(userPlaylistsAggFeatures);
+  //return userPlaylistsAggFeatures;
+  
+  //var myChart = new Chart(ctx, {...});
+    var ctx = document.getElementById('myChart').getContext('2d');
+      var myChart = new Chart(ctx, {
+          type: 'polarArea',
+          data: {
+              labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
+              datasets: [{
+                  label: 'Average Playlist Qualities',
+                  data: [userPlaylistsAggFeatures.acousticness, userPlaylistsAggFeatures.danceability, userPlaylistsAggFeatures.energy, userPlaylistsAggFeatures.instrumentalness, userPlaylistsAggFeatures.speechiness, userPlaylistsAggFeatures.valence],
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(255, 159, 64, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255, 99, 132, 1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)',
+                      'rgba(153, 102, 255, 1)',
+                      'rgba(255, 159, 64, 1)'
+                  ],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  yAxes: [{
+                        ticks: {
+                          beginAtZero: true
+                      }
+                  }]
+              }
+          }
+      });
+
   });
+
 
   //TODO: fully parse playlists and generate visuals using chartjs
 };
