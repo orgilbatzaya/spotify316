@@ -28,7 +28,6 @@ function Demo(){
     this.signOutButton.addEventListener('click', this.signOut.bind(this));
     this.playlists.addEventListener('click', this.analyzePlaylists.bind(this));
 
-
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged.bind(this));
 
   }.bind(this))
@@ -47,6 +46,9 @@ Demo.prototype.onAuthStateChanged = async function(user) {
     var userProfilePlaceholder = this.userProfilePlaceholder;
     var topArtistsPlaceholder = this.topArtistsPlaceholder;
     var topTracksPlaceholder = this.topTracksPlaceholder;
+	  
+    localStorage.setItem('access_token', access_token);
+	  
     $.ajax({ // fill in personal details 
         url: 'https://api.spotify.com/v1/me',
         headers: {
@@ -106,6 +108,8 @@ Demo.prototype.signOut = function() {
   firebase.auth().signOut();
 };
 
+
+ 
 
 Demo.prototype.analyzePlaylists = function() {
   var user = firebase.auth().currentUser;
