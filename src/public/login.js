@@ -12,6 +12,8 @@ var userPlaylistsAggFeatures = {
   valence:0 
 };
 
+
+
 function Demo(){
   document.addEventListener('DOMContentLoaded', function() {
     this.signInButton = document.getElementById('sign-in-button');
@@ -201,27 +203,32 @@ Demo.prototype.analyzePlaylists = function() {
 //recent tracks data visualization
 Demo.prototype.recentChart = function() {
 
+  var userTracks = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  };
 
   console.log("you've clicked #1");
   var user = firebase.auth().currentUser;
   var uid = user.uid;
   var db = firebase.firestore();
 
-  
   console.log(uid);
 
-	db.collection('recenttracks').doc(uid).get().then((docRef) => {
+	db.collection('recenttracks').doc(uid).get().then((doc) => {
     
-    
-    console.log(docRef.data().agg_features);
-    users.push(docRef.data().agg_features['acousticness']);
-    users.push(docRef.data().agg_features['danceability']);
-    users.push(docRef.data().agg_features['energy']);
-    users.push(docRef.data().agg_features['instrumentalness']);
-    users.push(docRef.data().agg_features['speechiness']);
-    users.push(docRef.data().agg_features['valence']);
+    console.log(doc.data().agg_features);
+    userTracks.acousticness += doc.data().agg_features.acousticness;
+    userTracks.danceability += doc.data().agg_features.danceability;
+    userTracks.energy += doc.data().agg_features.energy;
+    userTracks.instrumentalness += doc.data().agg_features.instrumentalness;
+    userTracks.speechiness += doc.data().agg_features.speechiness;
+    userTracks.valence += doc.data().agg_features.valence;
 
-    console.log(users);
     })
     .catch(function(error) {
       console.log("Error getting documents: ", error);
@@ -232,22 +239,57 @@ Demo.prototype.recentChart = function() {
   var myChart = new Chart(ctx, {
     type: 'polarArea',
     data: {
-      labels: ["acousticness", "danceability", "energy", "instrumentalness", " spechiness", "valence"],
-      datasets: [
-        {
-          label: "Population (millions)",
-          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-          data: users
-        }
-      ]
+        labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
+        datasets: [{
+            label: 'Average Playlist Qualities',
+            data: [userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
     },
     options: {
-      title: {
-        display: true,
-        text: 'Predicted world population (millions) in 2050'
-      }
+        title: {
+            display: true,
+            text: 'Recent Track Qualities'
+        }
     }
-  });
+});
+
+  // var myChart = new Chart(ctx, {
+
+  //   type: 'polarArea',
+  //   data: {
+  //     labels: ["acousticness", "danceability", "energy", "instrumentalness", " spechiness", "valence"],
+  //     datasets: [
+  //       {
+  //         label: "Recent Tracks",
+  //         backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+  //         data: [userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence]
+  //       }
+  //     ]
+  //   },
+  //   options: {
+  //     title: {
+  //       display: true,
+  //       text: 'Predicted world population (millions) in 2050'
+  //     }
+  //   }
+  // });
 };
 
 
