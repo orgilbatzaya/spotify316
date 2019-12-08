@@ -40,21 +40,35 @@
 	<div class="center-pane-margin">
 		<div class="container">
 			<div class="row">
-				<div class="col-lg-12">
+<!--				<div class="col-lg-12">-->
 					<h1 class="gradient-text">Find your musical match!</h1>
 					<div class="card-deck">
 						<% users.forEach(function(user) { %>
-						<div class="card">
-							<img class="card-img-top" src="<%= user.image %>" alt="Card image cap"> 
+<!--						<div class="col-lg-3">-->
+							<div class="card text-center" style="border-radius: 25px; border: 2px solid #FF6C6C; overflow:hidden;">
+								<div style="height: auto; background-color: #FF6C6C; padding: 10px;"><img class="card-img-top profile-img" src="<%= user.image %>" alt=" Profile Image" style="min-height:180px;"></div> 
+								<div class="card-body">
+									<h5 class="card-title"><%= user.name %></h5>
+<!--									<p class="card-text"><%= user.email %></p>-->
+									<button type="button" class="btn btn-lightred btn-primary">Compare</button>
+									<button type="button" name="follow" class="btn btn-lightred btn-primary">Follow</button>
+								</div>
+							</div>	
+<!--						</div>-->
+<!--
+						<div class="card border border-danger" style="border-radius: 25px; overflow:hidden;">
+							<img class="card-img-top" src="<%= user.image %>" alt=" Profile Image"> 
 							<div class="card-body">
 								<h5 class="card-title"><%= user.name %></h5>
 								<p class="card-text"><%= user.email %></p>
+								<button type="button" class="btn btn-lightred btn-primary">Compare</button>
 								<button type="button" name="follow" class="btn btn-lightred btn-primary">Follow</button>
 							</div>
 						</div>
+-->
 						<% }); %>
 					</div>					
-				</div>
+<!--				</div>-->
 			</div>
 		</div>
 	</div>

@@ -60,10 +60,11 @@ body{
 	background-color: #FF6C6C !important;
 	border-color: #FF6C6C !important;
 	color: white;
+	margin: 2px !important;
 }
 
 .profile-img {
-  border-radius: 50%;
+  border-radius: 50% !important;
   border: 5px solid white;
 }
 
@@ -150,4 +151,9 @@ hr {
 	background-image: -webkit-gradient(linear,0% 0%,25% 100%,from(#ff2323),to(#FF23C0));
 	-webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+.card {
+	border: 1px solid #ff2323;
+	border-radius: 20px;
 }
