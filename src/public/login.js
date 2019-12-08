@@ -4,15 +4,6 @@ var oauthTemplate = Handlebars.getTemplate('oauth-template');
 var userProfileTemplate = Handlebars.getTemplate("user-profile-template");
 var topArtistsTemplate = Handlebars.getTemplate('top-artists-template');
 var topTracksTemplate = Handlebars.getTemplate('top-tracks-template');
-// This variable includes the average of all playlists' features
-var userPlaylistsAggFeatures = {
-  acousticness:0,
-  danceability:0,
-  energy:0,
-  instrumentalness:0,
-  speechiness:0,
-  valence:0 
-};
 
 function Demo(){
   document.addEventListener('DOMContentLoaded', function() {
@@ -121,12 +112,20 @@ Demo.prototype.analyzePlaylists = function() {
   var uid = user.uid;
   var db = firebase.firestore();
   var userPlaylistCount = 0;
+  // This variable includes the average of all playlists' features
+  var userPlaylistsAggFeatures = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  };
   var docRef = db.collection('playlists').get().then(function(querySnapshot){
     querySnapshot.forEach(function(doc){
       //console.log(doc.id, '=>', doc.data());
       if (doc.data().owner == uid){
         // Add together aggregate data features, and keep a counter to divide by total number
-        //console.log(doc.data().agg_features);
         userPlaylistsAggFeatures.acousticness += doc.data().agg_features.acousticness;
         userPlaylistsAggFeatures.danceability += doc.data().agg_features.danceability;
         userPlaylistsAggFeatures.energy += doc.data().agg_features.energy;
@@ -147,46 +146,45 @@ Demo.prototype.analyzePlaylists = function() {
   //return userPlaylistsAggFeatures;
   
   //var myChart = new Chart(ctx, {...});
+    var ctx = document.getElementById('myChart').getContext('2d');
+      var myChart = new Chart(ctx, {
+          type: 'polarArea',
+          data: {
+              labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
+              datasets: [{
+                  label: 'Average Playlist Qualities',
+                  data: [userPlaylistsAggFeatures.acousticness, userPlaylistsAggFeatures.danceability, userPlaylistsAggFeatures.energy, userPlaylistsAggFeatures.instrumentalness, userPlaylistsAggFeatures.speechiness, userPlaylistsAggFeatures.valence],
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(255, 159, 64, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255, 99, 132, 1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)',
+                      'rgba(153, 102, 255, 1)',
+                      'rgba(255, 159, 64, 1)'
+                  ],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  yAxes: [{
+                        ticks: {
+                          beginAtZero: true
+                      }
+                  }]
+              }
+          }
+      });
 
   });
-
-    var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
-                datasets: [{
-                    label: 'Average Playlist Qualities',
-                    data: [userPlaylistsAggFeatures.acousticness, userPlaylistsAggFeatures.danceability, userPlaylistsAggFeatures.energy, userPlaylistsAggFeatures.instrumentalness, userPlaylistsAggFeatures.speechiness, userPlaylistsAggFeatures.valence],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-        });
 
 
   //TODO: fully parse playlists and generate visuals using chartjs
