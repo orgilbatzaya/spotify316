@@ -358,7 +358,7 @@ app.get('/token', function(req, res) {
           const accessToken = data.body['access_token'];
           const refreshToken = data.body['refresh_token'];
           const spotifyUserID = userResults.body['id'];
-          const profilePic = userResults.body['images'][0] ? userResults.body['images'][0] : "none";
+          const profilePic = userResults.body['images'][0] ? userResults.body['images'][0] : {url:"None"};
           const userName = userResults.body['display_name'];
           const email = userResults.body['email'];
           const followers = userResults.body['followers'];
