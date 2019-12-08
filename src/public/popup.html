@@ -55,7 +55,7 @@
     document.body.innerText = 'Error back from the Spotify auth page: ' + error;
   } else if(!code) {
     // Start the auth flow.
-    window.location.href  = 'http://localhost:5000/redirect';//'https://spotify316-40ea2.firebaseapp.com/redirect';
+    window.location.href  = 'http://localhost:9000/redirect';//'https://spotify316-40ea2.firebaseapp.com/redirect';
   } else {
     // Use JSONP to load the 'token' Firebase Function to exchange the auth code against a Firebase custom token.
     const script = document.createElement('script');
