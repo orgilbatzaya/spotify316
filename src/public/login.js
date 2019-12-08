@@ -4,6 +4,15 @@ var oauthTemplate = Handlebars.getTemplate('oauth-template');
 var userProfileTemplate = Handlebars.getTemplate("user-profile-template");
 var topArtistsTemplate = Handlebars.getTemplate('top-artists-template');
 var topTracksTemplate = Handlebars.getTemplate('top-tracks-template');
+// This variable includes the average of all playlists' features
+var userPlaylistsAggFeatures = {
+  acousticness:0,
+  danceability:0,
+  energy:0,
+  instrumentalness:0,
+  speechiness:0,
+  valence:0 
+};
 
 function Demo(){
   document.addEventListener('DOMContentLoaded', function() {
@@ -109,29 +118,45 @@ Demo.prototype.signOut = function() {
 
 Demo.prototype.analyzePlaylists = function() {
   var user = firebase.auth().currentUser;
-  var uid = user.uid.split(':')[1];
+  var uid = user.uid;
   var db = firebase.firestore();
-  var docRef = db.collection("users").doc(`${uid}`);
-  var playlistsBottom = this.playlistsBottom;
-
-  docRef.get().then(function(doc) {
-      if (doc.exists) {
-          var stuff = doc.data().playlists;
-          var myPlaylists = '';
-          var myPlaylists = []
-          for(var i = 0; i < stuff.length; i++){
-            console.log(stuff[i].name);
-            myPlaylists += stuff[i].name + ' ';
-          }
-
-          playlistsBottom.innerText = myPlaylists;
-
-      } else {
-      console.log("No such document!");
+  var userPlaylistCount = 0;
+  var docRef = db.collection('playlists').get().then(function(querySnapshot){
+    querySnapshot.forEach(function(doc){
+      //console.log(doc.id, '=>', doc.data());
+      if (doc.data().owner == uid){
+        // Add together aggregate data features, and keep a counter to divide by total number
+        //console.log(doc.data().agg_features);
+        userPlaylistsAggFeatures.acousticness += doc.data().agg_features.acousticness;
+        userPlaylistsAggFeatures.danceability += doc.data().agg_features.danceability;
+        userPlaylistsAggFeatures.energy += doc.data().agg_features.energy;
+        userPlaylistsAggFeatures.instrumentalness += doc.data().agg_features.instrumentalness;
+        userPlaylistsAggFeatures.speechiness += doc.data().agg_features.speechiness;
+        userPlaylistsAggFeatures.valence += doc.data().agg_features.valence;
+        userPlaylistCount += 1;
       }
-  }).catch(function(error) {
-      console.log("Error getting document:", error);
+    })
+    // Divide by number of user playlists
+    userPlaylistsAggFeatures.acousticness /= userPlaylistCount;
+    userPlaylistsAggFeatures.danceability /= userPlaylistCount;
+    userPlaylistsAggFeatures.energy /= userPlaylistCount;
+    userPlaylistsAggFeatures.instrumentalness /= userPlaylistCount;
+    userPlaylistsAggFeatures.speechiness /= userPlaylistCount;
+    userPlaylistsAggFeatures.valence /= userPlaylistCount;
+    console.log(userPlaylistsAggFeatures);
+  //return userPlaylistsAggFeatures;
+  
+  //var myChart = new Chart(ctx, {...});
+
   });
+
+    //document.getElementById("chart_acousticness").value = userPlaylistsAggFeatures.acousticness;
+    //document.getElementById("chart_danceability").value = userPlaylistsAggFeatures.danceability;
+    //document.getElementById("chart_energy").value = userPlaylistsAggFeatures.energy;
+    //document.getElementById("chart_instrumentalness").value = userPlaylistsAggFeatures.instrumentalness;
+    //document.getElementById("chart_speechiness").value = userPlaylistsAggFeatures.speechiness;
+    //document.getElementById("chart_valence").value = userPlaylistsAggFeatures.valence;
+
 
   //TODO: fully parse playlists and generate visuals using chartjs
 };
