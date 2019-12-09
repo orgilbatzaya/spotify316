@@ -76,7 +76,6 @@
 		
 		var curr_users = JSON.parse($('#userJSON').text());
 		$('#userJSON').remove();
-		//var users = <%= users %>;
 		var user_self;
 		console.log("LENFGTH, ",curr_users.length);
 		for(i = 0; i<curr_users.length; i++){
@@ -85,9 +84,7 @@
 				break;
 			}
 		}
-		
-		var user_other = user_self;
-		
+				
 		function compareUser(j) {
 			console.log(j);
 			console.log(curr_users[j]);
@@ -118,7 +115,7 @@
 					backgroundColor: 'rgba(255, 99, 132, 0.2)',
 					borderColor: 'rgba(255, 99, 132, 1)',
 					borderWidth: 1
-				},
+				}
 		      ]
 			},
 			options: {
