@@ -12,7 +12,7 @@
   	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 	
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
+	
     <!--   	handlebars for templating-->   
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.2/handlebars.js"></script> 
 	 <script src="./handlebars.js"></script> <!-- helper function here -->
@@ -20,7 +20,9 @@
 	
 	  <!-- Icons -->
 	  <script src="https://kit.fontawesome.com/862904df26.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
+	
 <body>
   <nav class="navbar navbar-default navbar-expand-lg fixed-top">
       <a class="navbar-brand" href="#">Spotify316</a>
@@ -39,44 +41,74 @@
 	
 	<div class="center-pane-margin">
 		<div class="container">
-			<div class="row">
-<!--				<div class="col-lg-12">-->
-					<h1 class="gradient-text">Find your musical match!</h1>
+<!--			<h1 class="gradient-text">Find your musical match!</h1>-->
+			
+			<div class="sidebar-match">
+				<h3>Compare</h3>
+				<canvas id="myChart" width="400" height="400"></canvas>
+			</div>
+			<div class="mainbar">
+				<div class="row">
 					<div class="card-deck">
 						<% users.forEach(function(user) { %>
-<!--						<div class="col-lg-3">-->
-							<div class="card text-center" style="border-radius: 25px; border: 2px solid #FF6C6C; overflow:hidden;">
-								<div style="height: auto; background-color: #FF6C6C; padding: 10px;">
-									<img class="card-img-top profile-img" src="<%= user.image %>" alt=" Profile Image" style="min-height:180px;">
-									<h3 style="color: white; padding-top: 10px;">90%</h3>
-								</div> 
-								<div class="card-body">
-									<h5 class="card-title"><%= user.name %></h5>
-<!--									<p class="card-text"><%= user.email %></p>-->
-									<button type="button" class="btn btn-lightred btn-primary">Compare</button>
-									<button type="button" name="follow" class="btn btn-lightred btn-primary"><i class='fas fa-user-plus' style='color:white'></i>
-</button>
+					 	<div class="col-lg-3" style="margin:0px 0px 5px 0px !important; padding:0px !important;">
+							<div class="card text-center" style="border-radius: 25px; border: 1px solid #ff2323; overflow:hidden; margin: 5px;">
+<!--								<div style="height: auto; padding: 10px;">-->
+									<img class="card-img-top" src="<%= user.user_info.image %>" alt=" Profile Image" style="min-height:190px;">
+									<h3 style="color: #ff2323; padding-top: 10px;">90%</h3>
+<!--								</div> -->
+								<div class="card-body" style="padding-top:0px !important;">
+									<h5 class="card-title"><%= user.user_info.name %></h5>
+<!--									<a href="<%= user.url %>"><i class="fab fa-spotify" style="color:#1DB954"></i></a>-->
+									<p>Recent track valence: <%= user.recent_tracks.agg_features.valence %></p>
+									<p>Top track valence: <%= user.top_tracks.agg_features.valence %></p>
+									<button type="button" class="btn btn-lightred btn-primary btn-sm">Compare</button>
+									<button type="button" name="follow" class="btn btn-lightred btn-primary btn-sm"><i class='fas fa-user-plus' style='color:white'></i></button>
 								</div>
 							</div>	
-<!--						</div>-->
-<!--
-						<div class="card border border-danger" style="border-radius: 25px; overflow:hidden;">
-							<img class="card-img-top" src="<%= user.image %>" alt=" Profile Image"> 
-							<div class="card-body">
-								<h5 class="card-title"><%= user.name %></h5>
-								<p class="card-text"><%= user.email %></p>
-								<button type="button" class="btn btn-lightred btn-primary">Compare</button>
-								<button type="button" name="follow" class="btn btn-lightred btn-primary">Follow</button>
-							</div>
 						</div>
--->
 						<% }); %>
-					</div>					
-<!--				</div>-->
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 
+	<script>
+	var ctx = document.getElementById('myChart').getContext('2d');
+	var myChart = new Chart(ctx, {
+		type: 'radar',
+		data: {
+			labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+			datasets: [{
+				label: '# of Votes',
+				data: [12, 19, 3, 5, 2, 3],
+				backgroundColor: [
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)'
+				],
+				borderColor: [
+					'rgba(255, 99, 132, 1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)'
+				],
+				borderWidth: 1
+			}]
+		},
+		options: {
+			scales: {
+			}
+		}
+	});
+	</script>
+	
   <script>
     var users = "<%= users %>";
     function assignButtons() {

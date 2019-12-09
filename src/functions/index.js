@@ -51,31 +51,61 @@ app.set('view engine', 'ejs');
 
 
 
-app.get('/matches', function(req, res) {
+app.get('/matches', async function(req, res) {
 
-	var users = [];
+	const users = [];
 	
+	const userData = await db.collection('users').get();
+	const docs = userData.docs;
+	for(let i = 0; i < docs.length; i++){
+		var person = {
+			user_info: {},
+			recent_tracks: {},
+			top_tracks: {}
+		}
+		person.user_info = docs[i].data();
+		
+		var recentTracksData = await db.collection('recenttracks').doc(docs[i].id).get();
+		person.recent_tracks = recentTracksData.data();
+		
+		var topTracksData = await db.collection('toptracks').doc(docs[i].id).get();
+		person.top_tracks = topTracksData.data();
+		users.push(person);
+	}
+	
+//	db.collection('recenttracks').get()
+//		.then(snapshot => {
+//			snapshot.forEach(doc => {
+//				var rtrack = doc.data();
+//				//console.log(rtrack);
+//				recentTracks.push(rtrack);
+//			});
+//		})
+//		.catch(err => {
+//			console.error('Error getting documents',err);
+//			process.exit();
+//		})  
+//	
+//	db.collection('toptracks').get()
+//		.then(snapshot => {
+//			snapshot.forEach(doc => {
+//				var ttrack = doc.data();
+//				//console.log(ttrack);
+//				topTracks.push(ttrack);
+//			});
+//		})
+//		.catch(err => {
+//			console.error('Error getting documents',err);
+//			process.exit();
+//		})
+				
+	res.render('matches', {
+		users: users,
+        access_token: global_access_tok,
+        db:db
+	});
 
-	db.collection('users').get()
-		.then(snapshot => {
-		console.log(snapshot);
-			snapshot.forEach(doc => {
-				var person = doc.data();
-				console.log(person);
-				users.push(person);
-			});
-			res.render('matches', {
-        		users: users,
-            access_token: global_access_tok,
-            db:db
-    		});
-
-			
-		})
-		.catch(err => {
-			console.error('Error getting documents',err);
-			process.exit();
-		})      
+	
 });
 
 
