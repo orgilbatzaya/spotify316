@@ -126,10 +126,62 @@ Demo.prototype.analyzePlaylists = function() {
     speechiness:0,
     valence:0 
   };
+    var userPlaylist1 = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  };
+    var userPlaylist2 = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  };
+    var userPlaylist3 = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  };
+  var chartData = [];
   var docRef = db.collection('playlists').get().then(function(querySnapshot){
     querySnapshot.forEach(function(doc){
       //console.log(doc.id, '=>', doc.data());
       if (doc.data().owner == uid){
+        if (userPlaylistCount == 0){
+          userPlaylist1.acousticness = doc.data().agg_features.acousticness;
+          userPlaylist1.danceability = doc.data().agg_features.danceability;
+          userPlaylist1.energy = doc.data().agg_features.energy;
+          userPlaylist1.instrumentalness = doc.data().agg_features.instrumentalness;
+          userPlaylist1.speechiness = doc.data().agg_features.speechiness;
+          userPlaylist1.valence = doc.data().agg_features.valence;
+          chartData[0] = {label:doc.data().name, data:[userPlaylist1.acousticness, userPlaylist1.danceability, userPlaylist1.energy, userPlaylist1.instrumentalness, userPlaylist1.speechiness, userPlaylist1.valence], backgroundColor: 'rgba(255, 99, 132, 0.2)'};
+        }
+        if (userPlaylistCount == 1){
+          userPlaylist2.acousticness = doc.data().agg_features.acousticness;
+          userPlaylist2.danceability = doc.data().agg_features.danceability;
+          userPlaylist2.energy = doc.data().agg_features.energy;
+          userPlaylist2.instrumentalness = doc.data().agg_features.instrumentalness;
+          userPlaylist2.speechiness = doc.data().agg_features.speechiness;
+          userPlaylist2.valence = doc.data().agg_features.valence;
+          chartData[1] = {label:doc.data().name, data:[userPlaylist2.acousticness, userPlaylist2.danceability, userPlaylist2.energy, userPlaylist2.instrumentalness, userPlaylist2.speechiness, userPlaylist2.valence], backgroundColor: 'rgba(54, 162, 235, 0.2)'};
+        }
+        if (userPlaylistCount == 2){
+          userPlaylist3.acousticness = doc.data().agg_features.acousticness;
+          userPlaylist3.danceability = doc.data().agg_features.danceability;
+          userPlaylist3.energy = doc.data().agg_features.energy;
+          userPlaylist3.instrumentalness = doc.data().agg_features.instrumentalness;
+          userPlaylist3.speechiness = doc.data().agg_features.speechiness;
+          userPlaylist3.valence = doc.data().agg_features.valence;
+          chartData[2] = {label:doc.data().name, data:[userPlaylist3.acousticness, userPlaylist3.danceability, userPlaylist3.energy, userPlaylist3.instrumentalness, userPlaylist3.speechiness, userPlaylist3.valence], backgroundColor: 'rgba(255, 206, 86, 0.2)'};
+        }
         // Add together aggregate data features, and keep a counter to divide by total number
         userPlaylistsAggFeatures.acousticness += doc.data().agg_features.acousticness;
         userPlaylistsAggFeatures.danceability += doc.data().agg_features.danceability;
@@ -149,34 +201,15 @@ Demo.prototype.analyzePlaylists = function() {
     userPlaylistsAggFeatures.valence /= userPlaylistCount;
     console.log(userPlaylistsAggFeatures);
   //return userPlaylistsAggFeatures;
+  chartData[userPlaylistCount] = {label:'Average', data:[userPlaylistsAggFeatures.acousticness, userPlaylistsAggFeatures.danceability, userPlaylistsAggFeatures.energy, userPlaylistsAggFeatures.instrumentalness, userPlaylistsAggFeatures.speechiness, userPlaylistsAggFeatures.valence], backgroundColor: 'rgba(153, 102, 255, 0.2)'};
   
-  //var myChart = new Chart(ctx, {...});
+  // Create chart
     var ctx = document.getElementById('myChart').getContext('2d');
       var myChart = new Chart(ctx, {
-          type: 'polarArea',
+          type: 'radar',
           data: {
               labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
-              datasets: [{
-                  label: 'Average Playlist Qualities',
-                  data: [userPlaylistsAggFeatures.acousticness, userPlaylistsAggFeatures.danceability, userPlaylistsAggFeatures.energy, userPlaylistsAggFeatures.instrumentalness, userPlaylistsAggFeatures.speechiness, userPlaylistsAggFeatures.valence],
-                  backgroundColor: [
-                      'rgba(255, 99, 132, 0.2)',
-                      'rgba(54, 162, 235, 0.2)',
-                      'rgba(255, 206, 86, 0.2)',
-                      'rgba(75, 192, 192, 0.2)',
-                      'rgba(153, 102, 255, 0.2)',
-                      'rgba(255, 159, 64, 0.2)'
-                  ],
-                  borderColor: [
-                      'rgba(255, 99, 132, 1)',
-                      'rgba(54, 162, 235, 1)',
-                      'rgba(255, 206, 86, 1)',
-                      'rgba(75, 192, 192, 1)',
-                      'rgba(153, 102, 255, 1)',
-                      'rgba(255, 159, 64, 1)'
-                  ],
-                  borderWidth: 1
-              }]
+              datasets: chartData
           },
           options: {
               
@@ -192,8 +225,6 @@ Demo.prototype.analyzePlaylists = function() {
 
   });
 
-
-  //TODO: fully parse playlists and generate visuals using chartjs
 };
 
 //recent tracks data visualization
