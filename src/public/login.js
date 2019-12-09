@@ -49,37 +49,21 @@ Demo.prototype.onAuthStateChanged = async function(user) {
 	  
     localStorage.setItem('access_token', access_token);
 	  
-    $.ajax({ // fill in personal details 
-        url: 'https://api.spotify.com/v1/me',
-        headers: {
-          'Authorization': 'Bearer ' + access_token
-        },
-        success: function(response) {
-          userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-            console.log("log in success");
-        }
-    });
-    $.ajax({ // fill in users top artists
-        url: 'https://api.spotify.com/v1/me/top/artists',
-        headers: {
-          'Authorization': 'Bearer ' + access_token
-        },
-        success: function(response) {
-          topArtistsPlaceholder.innerHTML = topArtistsTemplate(response);
-        }
-    });
-    $.ajax({ // fill in users top tracks
-        url: 'https://api.spotify.com/v1/me/top/tracks',
-        headers: {
-          'Authorization': 'Bearer ' + access_token
-        },
-        success: function(response) {
-          topTracksPlaceholder.innerHTML = topTracksTemplate(response);
-        }
-    });
-    //this.signedOutCard.style.display = 'none';
-    //this.signedInCard.style.display = 'block';
-  } else {
+     //fill in users profile
+    const user_profile = await firebase.firestore().collection('users').doc(user.uid).get();
+    console.log(user_profile.data());
+    userProfilePlaceholder.innerHTML = userProfileTemplate(user_profile.data());
+
+   //fill in users top artists
+    const top_artists = await firebase.firestore().collection('topartists').doc(user.uid).get();
+    topArtistsPlaceholder.innerHTML = topArtistsTemplate(top_artists.data());
+   
+   //fill in users top trackcs
+    const top_tracks = await firebase.firestore().collection('toptracks').doc(user.uid).get();
+    topTracksPlaceholder.innerHTML = topTracksTemplate(top_tracks.data());
+
+
+         } else {
     // render initial screen
       console.log("log in failed!");
 	 // $('.fullPageIntroInit').fullpage();
