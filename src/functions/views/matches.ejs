@@ -12,7 +12,7 @@
   	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 	
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
+	
     <!--   	handlebars for templating-->   
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.2/handlebars.js"></script> 
 	 <script src="./handlebars.js"></script> <!-- helper function here -->
@@ -20,7 +20,9 @@
 	
 	  <!-- Icons -->
 	  <script src="https://kit.fontawesome.com/862904df26.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
+	
 <body>
   <nav class="navbar navbar-default navbar-expand-lg fixed-top">
       <a class="navbar-brand" href="#">Spotify316</a>
@@ -39,26 +41,127 @@
 	
 	<div class="center-pane-margin">
 		<div class="container">
-			<div class="row">
-				<div class="col-lg-12">
-					<h1 class="gradient-text">Find your musical match!</h1>
+<!--			<h1 class="gradient-text">Find your musical match!</h1>-->
+			
+			<div class="sidebar-match text-center">
+				<h3>Compare</h3>
+				<canvas id="myChart" width="400" height="400"></canvas><br>
+				<div class="btn-group btn-group-toggle" data-toggle="buttons">
+				  <label class="btn btn-light active">
+					<input type="radio" name="options" id="option1" autocomplete="off" checked> Top Tracks
+				  </label>
+				  <label class="btn btn-light">
+					<input type="radio" name="options" id="option2" autocomplete="off"> Recent Trends
+				  </label>
+				</div>				
+			</div>
+			<div class="mainbar">
+				<div class="row">
 					<div class="card-deck">
-						<% users.forEach(function(user) { %>
-						<div class="card">
-							<img class="card-img-top" src="<%= user.image %>" alt="Card image cap"> 
-							<div class="card-body">
-								<h5 class="card-title"><%= user.name %></h5>
-								<p class="card-text"><%= user.email %></p>
-								<button type="button" name="follow" class="btn btn-lightred btn-primary">Follow</button>
-							</div>
+						<% for(j=0; j<users.length; j++) { %>
+					 	<div class="col-lg-3" style="margin:0px 0px 5px 0px !important; padding:0px !important;">
+							<div class="card text-center" style="border-radius: 25px; overflow:hidden; margin: 5px; box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.07), 0 6px 20px 0 rgba(0, 0, 0, 0.07);"> <!-- border: 1px solid #ff2323; -->
+									<img class="card-img-top" src="<%= users[j].user_info.image %>" alt=" Profile Image" style="min-height:190px;">
+									<h3 style="color: #ff2323; padding-top: 10px;">90%</h3>
+								<div class="card-body" style="padding-top:0px !important;">
+									<h5 class="card-title"><%= users[j].user_info.name %></h5>
+									<button type="button" onclick="compareUser(<%= j %>)" class="btn btn-lightred btn-primary btn-sm">Compare</button>
+									<button type="button" name="follow" class="btn btn-lightred btn-primary btn-sm"><i class='fas fa-user-plus' style='color:white'></i></button>
+								</div>
+							</div>	
 						</div>
-						<% }); %>
-					</div>					
+						<% } %>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<span id='userJSON' hidden>
+    <%= JSON.stringify(users); %>
+	</span>
 
+	<script>
+		
+		var curr_users = JSON.parse($('#userJSON').text());
+		$('#userJSON').remove();
+		var user_self;
+		console.log("LENFGTH, ",curr_users.length);
+		for(i = 0; i<curr_users.length; i++){
+			if(curr_users[i].id == localStorage.getItem('uid')){
+				user_self = curr_users[i];
+				break;
+			}
+		}
+				
+		function compareUser(j) {
+			console.log(j);
+			console.log(curr_users[j]);
+			var label = curr_users[j].user_info.name+"'s data";
+			var data = [curr_users[j].top_tracks.agg_features.acousticness,
+						   curr_users[j].top_tracks.agg_features.danceability,
+						   curr_users[j].top_tracks.agg_features.energy,
+						   curr_users[j].top_tracks.agg_features.instrumentalness,
+						   curr_users[j].top_tracks.agg_features.speechiness,
+						   curr_users[j].top_tracks.agg_features.valence];
+			addData(myChart, label, data);
+		}
+		
+	/*	function getActive(){
+			console.log( document.querySelector('.option_gender:checked').value );
+		}
+		document.querySelectorAll(".option_gender").forEach( input => input.addEventListener('click', getActive) );		*/
+
+		var ctx = document.getElementById('myChart').getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: 'radar',
+			data: {
+				labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
+				datasets: [{
+					label: "Your data",
+					data: [user_self.top_tracks.agg_features.acousticness,
+						   user_self.top_tracks.agg_features.danceability,
+						   user_self.top_tracks.agg_features.energy,
+						   user_self.top_tracks.agg_features.instrumentalness,
+						   user_self.top_tracks.agg_features.speechiness,
+						   user_self.top_tracks.agg_features.valence],
+					
+					backgroundColor: 'rgba(255, 99, 132, 0.2)',
+					borderColor: 'rgba(255, 99, 132, 1)',
+					borderWidth: 1
+				}
+		      ]
+			},
+			options: {
+				scales: {
+				}
+			}
+		});
+		
+		function addData(chart, label, data) {
+			if(chart.data.datasets.length == 2){
+				chart.data.datasets.pop();
+			}
+			var new_user_data = {
+				label : label,
+				data : data,
+				backgroundColor : 'rgba(75, 192, 192, 0.2)',
+				borderColor : 'rgba(75, 192, 192, 1)',
+				borderWidth: 1
+			}
+			chart.data.datasets.push(new_user_data);
+			chart.update();
+		}
+
+		function removeData(chart) {
+			chart.data.labels.pop();
+			chart.data.datasets.forEach((dataset) => {
+				dataset.data.pop();
+			});
+			chart.update();
+		}
+		
+	</script>
+	
   <script>
     var users = "<%= users %>";
     function assignButtons() {

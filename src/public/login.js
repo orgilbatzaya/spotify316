@@ -1,16 +1,16 @@
-
-
 var oauthTemplate = Handlebars.getTemplate('oauth-template');
 var userProfileTemplate = Handlebars.getTemplate("user-profile-template");
 var topArtistsTemplate = Handlebars.getTemplate('top-artists-template');
 var topTracksTemplate = Handlebars.getTemplate('top-tracks-template');
-var newReleasesTemplate = Handlebars.getTemplate('new-releases-template');
 
 function Demo(){
   document.addEventListener('DOMContentLoaded', function() {
     this.signInButton = document.getElementById('sign-in-button');
     this.signInButtonTop = document.getElementById('sign-in-button-top');
     this.signOutButton = document.getElementById('sign-out-button');
+    this.recentButton = document.getElementById('tab-button-one');
+    this.artistButton = document.getElementById('tab-button-two');
+    // this.playlistButton = document.getElementById('tab-button-three');
 
     // this.signedOutCard = document.getElementById('demo-signed-out-card');
     // this.signedInCard = document.getElementById('demo-signed-in-card');
@@ -18,7 +18,6 @@ function Demo(){
     this.topArtistsPlaceholder = document.getElementById('topartists');
     this.topTracksPlaceholder = document.getElementById('toptracks');
     this.oauthPlaceholder = document.getElementById('oauth');
-	this.newReleasesPlaceholder = document.getElementById('newReleases');
 
     this.playlists = document.getElementById('playlists');
     this.playlistsBottom = document.getElementById('playlists-bottom');
@@ -29,11 +28,18 @@ function Demo(){
     this.signInButtonTop.addEventListener('click', this.signIn.bind(this));
     this.signOutButton.addEventListener('click', this.signOut.bind(this));
     this.playlists.addEventListener('click', this.analyzePlaylists.bind(this));
+    
+    //chart event listeners
+    this.recentButton.addEventListener('click', this.recentChart.bind(this));
+    //this.artistButton.addEventListener('click', this.artistChart.bind(this));
+    // this.playlistButton.addEventListener('click', this.playlistButton.bind(this));
 
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged.bind(this));
 
   }.bind(this))
 }
+
+
 
 // Triggered on Firebase auth state change.
 Demo.prototype.onAuthStateChanged = async function(user) {
@@ -48,51 +54,26 @@ Demo.prototype.onAuthStateChanged = async function(user) {
     var userProfilePlaceholder = this.userProfilePlaceholder;
     var topArtistsPlaceholder = this.topArtistsPlaceholder;
     var topTracksPlaceholder = this.topTracksPlaceholder;
-	var newReleasesPlaceholder = this.newReleasesPlaceholder;
 	  
     localStorage.setItem('access_token', access_token);
+	localStorage.setItem('uid', user.uid);
+
 	  
-    $.ajax({ // fill in personal details 
-        url: 'https://api.spotify.com/v1/me',
-        headers: {
-          'Authorization': 'Bearer ' + access_token
-        },
-        success: function(response) {
-          userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-            console.log("log in success");
-        }
-    });
-    $.ajax({ // fill in users top artists
-        url: 'https://api.spotify.com/v1/me/top/artists',
-        headers: {
-          'Authorization': 'Bearer ' + access_token
-        },
-        success: function(response) {
-          topArtistsPlaceholder.innerHTML = topArtistsTemplate(response);
-        }
-    });
-    $.ajax({ // fill in users top tracks
-        url: 'https://api.spotify.com/v1/me/top/tracks',
-        headers: {
-          'Authorization': 'Bearer ' + access_token
-        },
-        success: function(response) {
-          topTracksPlaceholder.innerHTML = topTracksTemplate(response);
-        }
-    });
-	$.ajax({ // fill in users top tracks
-        url: 'https://api.spotify.com/v1/browse/new-releases',
-        headers: {
-          'Authorization': 'Bearer ' + access_token
-        },
-        success: function(response) {
-			console.log(response.albums);
-          newReleasesPlaceholder.innerHTML = newReleasesTemplate(response);
-        }
-    });
-    //this.signedOutCard.style.display = 'none';
-    //this.signedInCard.style.display = 'block';
-  } else {
+     //fill in users profile
+    const user_profile = await firebase.firestore().collection('users').doc(user.uid).get();
+    console.log(user_profile.data());
+    userProfilePlaceholder.innerHTML = userProfileTemplate(user_profile.data());
+
+   //fill in users top artists
+    const top_artists = await firebase.firestore().collection('topartists').doc(user.uid).get();
+    topArtistsPlaceholder.innerHTML = topArtistsTemplate(top_artists.data());
+   
+   //fill in users top trackcs
+    const top_tracks = await firebase.firestore().collection('toptracks').doc(user.uid).get();
+    topTracksPlaceholder.innerHTML = topTracksTemplate(top_tracks.data());
+
+
+         } else {
     // render initial screen
       console.log("log in failed!");
 	 // $('.fullPageIntroInit').fullpage();
@@ -121,150 +102,171 @@ Demo.prototype.signOut = function() {
   firebase.auth().signOut();
 };
 
-
- 
-
 Demo.prototype.analyzePlaylists = function() {
   var user = firebase.auth().currentUser;
-  var uid = user.uid.split(':')[1];
+  var uid = user.uid;
   var db = firebase.firestore();
-  var docRef = db.collection("users").doc(`${uid}`);
-  var playlistsBottom = this.playlistsBottom;
-
-  docRef.get().then(function(doc) {
-      if (doc.exists) {
-          var stuff = doc.data().playlists;
-          var myPlaylists = '';
-          var myPlaylists = []
-          for(var i = 0; i < stuff.length; i++){
-            console.log(stuff[i].name);
-            myPlaylists += stuff[i].name + ' ';
-          }
-
-          playlistsBottom.innerText = myPlaylists;
-
-      } else {
-      console.log("No such document!");
+  var userPlaylistCount = 0;
+  // This variable includes the average of all playlists' features
+  var userPlaylistsAggFeatures = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  };
+  var docRef = db.collection('playlists').get().then(function(querySnapshot){
+    querySnapshot.forEach(function(doc){
+      //console.log(doc.id, '=>', doc.data());
+      if (doc.data().owner == uid){
+        // Add together aggregate data features, and keep a counter to divide by total number
+        userPlaylistsAggFeatures.acousticness += doc.data().agg_features.acousticness;
+        userPlaylistsAggFeatures.danceability += doc.data().agg_features.danceability;
+        userPlaylistsAggFeatures.energy += doc.data().agg_features.energy;
+        userPlaylistsAggFeatures.instrumentalness += doc.data().agg_features.instrumentalness;
+        userPlaylistsAggFeatures.speechiness += doc.data().agg_features.speechiness;
+        userPlaylistsAggFeatures.valence += doc.data().agg_features.valence;
+        userPlaylistCount += 1;
       }
-  }).catch(function(error) {
-      console.log("Error getting document:", error);
+    })
+    // Divide by number of user playlists
+    userPlaylistsAggFeatures.acousticness /= userPlaylistCount;
+    userPlaylistsAggFeatures.danceability /= userPlaylistCount;
+    userPlaylistsAggFeatures.energy /= userPlaylistCount;
+    userPlaylistsAggFeatures.instrumentalness /= userPlaylistCount;
+    userPlaylistsAggFeatures.speechiness /= userPlaylistCount;
+    userPlaylistsAggFeatures.valence /= userPlaylistCount;
+    console.log(userPlaylistsAggFeatures);
+  //return userPlaylistsAggFeatures;
+  
+  //var myChart = new Chart(ctx, {...});
+    var ctx = document.getElementById('myChart').getContext('2d');
+      var myChart = new Chart(ctx, {
+          type: 'polarArea',
+          data: {
+              labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
+              datasets: [{
+                  label: 'Average Playlist Qualities',
+                  data: [userPlaylistsAggFeatures.acousticness, userPlaylistsAggFeatures.danceability, userPlaylistsAggFeatures.energy, userPlaylistsAggFeatures.instrumentalness, userPlaylistsAggFeatures.speechiness, userPlaylistsAggFeatures.valence],
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(255, 159, 64, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255, 99, 132, 1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)',
+                      'rgba(153, 102, 255, 1)',
+                      'rgba(255, 159, 64, 1)'
+                  ],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              
+              scales: {
+                  yAxes: [{
+                        ticks: {
+                          beginAtZero: true
+                      }
+                  }]
+              }
+          }
+      });
+
   });
+
 
   //TODO: fully parse playlists and generate visuals using chartjs
 };
 
+//recent tracks data visualization
+
+Demo.prototype.recentChart = function() {
+    var userTracks = {
+      acousticness:0,
+      danceability:0,
+      energy:0,
+      instrumentalness:0,
+      speechiness:0,
+      valence:0 
+    }; 
+
+    console.log("you've clicked #1");
+    var user = firebase.auth().currentUser;
+    var uid = user.uid;
+    var db = firebase.firestore();
+
+    console.log(uid);
+
+	db.collection('recenttracks').doc(uid).get().then(function(doc) {
+    userTracks.acousticness += doc.data().agg_features.acousticness;
+    userTracks.danceability += doc.data().agg_features.danceability;
+    userTracks.energy += doc.data().agg_features.energy;
+    userTracks.instrumentalness += doc.data().agg_features.instrumentalness;
+    userTracks.speechiness += doc.data().agg_features.speechiness;
+    userTracks.valence += doc.data().agg_features.valence;
+    console.log([userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence]);
+   
+    var ctx = document.getElementById("chart-area").getContext('2d');
+
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
+            datasets: [{
+                data: [userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: 'Recent Track Qualities'
+          },
+            scales: {
+                yAxes: [{
+                      ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    
+
+
+      });
+    });
+
+
+    };
+
+Demo.prototype.artistChart = function() {
+  console.log("You've clicked button #2");
+};
+
+
 new Demo();
-
-// $(document).ready(function() {
-
-//         /**
-//          * Obtains parameters from the hash of the URL
-//          * @return Object
-//          */
-//         function getHashParams() {
-//           var hashParams = {};
-//           var e, r = /([^&;=]+)=?([^&;]*)/g,
-//               q = window.location.hash.substring(1);
-//           while ( e = r.exec(q)) {
-//              hashParams[e[1]] = decodeURIComponent(e[2]);
-//           }
-//           return hashParams;
-//         }
-//         var userProfileTemplate = Handlebars.getTemplate("user-profile-template"),
-//             userProfilePlaceholder = document.getElementById('user-profile');
-
-//         var topArtistsTemplate = Handlebars.getTemplate('top-artists-template'),
-//             topArtistsPlaceholder = document.getElementById('topartists');
-	
-// 		var topTracksTemplate = Handlebars.getTemplate('top-tracks-template'),
-//             topTracksPlaceholder = document.getElementById('toptracks');
-
-//         var oauthTemplate = Handlebars.getTemplate('oauth-template'),
-//             oauthPlaceholder = document.getElementById('oauth');
-
-//         var params = getHashParams();
-
-//         var access_token = params.access_token,
-//             refresh_token = params.refresh_token,
-//             error = params.error;
-
-//         if (error) {
-//           alert('There was an error during the authentication');
-//         } else {
-//           if (access_token) {
-//             // render oauth info
-//             oauthPlaceholder.innerHTML = oauthTemplate({
-//               access_token: access_token,
-//               refresh_token: refresh_token
-//             });
-//             console.log(access_token);
-//             $.ajax({
-//                 url: 'https://api.spotify.com/v1/me/top/artists',
-//                 headers: {
-//                   'Authorization': 'Bearer ' + access_token
-//                 },
-//                 success: function(response) {
-//                   topArtistsPlaceholder.innerHTML = topArtistsTemplate(response);
-
-//                   // $('#login').hide();
-//                   // $('#loggedin').show();
-//                   console.log(response);
-
-//                 }
-//             });
-//             console.log(access_token);
-			
-// 			$.ajax({
-//                 url: 'https://api.spotify.com/v1/me/top/tracks',
-//                 headers: {
-//                   'Authorization': 'Bearer ' + access_token
-//                 },
-//                 success: function(response) {
-//                   topTracksPlaceholder.innerHTML = topTracksTemplate(response);
-
-//                   // $('#login').hide();
-//                   // $('#loggedin').show();
-//                   console.log(response);
-
-//                 }
-//             });
-//             console.log(access_token);
-
-//             $.ajax({
-//                 url: 'https://api.spotify.com/v1/me',
-//                 headers: {
-//                   'Authorization': 'Bearer ' + access_token
-//                 },
-//                 success: function(response) {
-//                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-//                     console.log("log in success");
-//                   $('#login').hide();
-//                   $.fn.fullpage.destroy('all');
-//                   $('#loggedin').show();
-
-//                 }
-//             });
-
-//           } else {
-//               // render initial screen
-//               console.log("log in failed!");
-//               $('#login').show();
-//               $('#loggedin').hide();
-//           }
-
-//           document.getElementById('obtain-new-token').addEventListener('click', function() {
-//             $.ajax({
-//               url: '/refresh_token',
-//               data: {
-//                 'refresh_token': refresh_token
-//               }
-//             }).done(function(data) {
-//               access_token = data.access_token;
-//               oauthPlaceholder.innerHTML = oauthTemplate({
-//                 access_token: access_token,
-//                 refresh_token: refresh_token
-//               });
-//             });
-//           }, false);
-//         }
-//       });

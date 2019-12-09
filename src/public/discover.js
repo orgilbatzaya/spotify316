@@ -6,12 +6,12 @@ document.addEventListener('DOMContentLoaded', async function() {
   var discoverPlaceholder = document.getElementById('discovercontent')
 	//var newReleasesPlaceholder = this.newReleasesPlaceholder;
 
+
 //    var auth = await firebase.auth();
 //	var user = auth.currentUser;
-	console.log("HIII");
-//	console.log(user);
 //	var ref = firebase.database().ref(`/spotifyAccessToken/${user.uid}`)
 //    const snapshot = await ref.once('value');
+	
     var access_token = localStorage.getItem('access_token');
 
 	$.ajax({ // fill in users top tracks

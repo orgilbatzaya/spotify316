@@ -51,31 +51,63 @@ app.set('view engine', 'ejs');
 
 
 
-app.get('/matches', function(req, res) {
+app.get('/matches', async function(req, res) {
 
-	var users = [];
+	const users = [];
 	
+	const userData = await db.collection('users').get();
+	const docs = userData.docs;
+	for(let i = 0; i < docs.length; i++){
+		var person = {
+			id : '',
+			user_info: {},
+			recent_tracks: {},
+			top_tracks: {}
+		}
+		person.user_info = docs[i].data();
+		person.id = docs[i].id;
+		
+		var recentTracksData = await db.collection('recenttracks').doc(docs[i].id).get();
+		person.recent_tracks = recentTracksData.data();
+		
+		var topTracksData = await db.collection('toptracks').doc(docs[i].id).get();
+		person.top_tracks = topTracksData.data();
+		users.push(person);
+	}
+	
+//	db.collection('recenttracks').get()
+//		.then(snapshot => {
+//			snapshot.forEach(doc => {
+//				var rtrack = doc.data();
+//				//console.log(rtrack);
+//				recentTracks.push(rtrack);
+//			});
+//		})
+//		.catch(err => {
+//			console.error('Error getting documents',err);
+//			process.exit();
+//		})  
+//	
+//	db.collection('toptracks').get()
+//		.then(snapshot => {
+//			snapshot.forEach(doc => {
+//				var ttrack = doc.data();
+//				//console.log(ttrack);
+//				topTracks.push(ttrack);
+//			});
+//		})
+//		.catch(err => {
+//			console.error('Error getting documents',err);
+//			process.exit();
+//		})
+				
+	res.render('matches', {
+		users: users,
+        access_token: global_access_tok,
+        db:db
+	});
 
-	db.collection('users').get()
-		.then(snapshot => {
-		console.log(snapshot);
-			snapshot.forEach(doc => {
-				var person = doc.data();
-				console.log(person);
-				users.push(person);
-			});
-			res.render('matches', {
-        		users: users,
-            access_token: global_access_tok,
-            db:db
-    		});
-
-			
-		})
-		.catch(err => {
-			console.error('Error getting documents',err);
-			process.exit();
-		})      
+	
 });
 
 
@@ -208,6 +240,7 @@ async function pullData(spotifyID,access_token){
   const topArtists = topArtistData.body.items;
   // console.log("TOP ARTISTS RETRIEVED ",topArtistData.body);
   // console.log(topArtists.length);
+
  
   var artistList = [];
   for(var k = 0; k < topArtists.length; k++){
@@ -269,7 +302,7 @@ async function pullData(spotifyID,access_token){
  *
  * @returns {Promise<string>} The Firebase custom auth token in a promise.
  */
-async function createFirebaseAccount(spotifyID, displayName, profilePic, email, followers, accessToken) {
+async function createFirebaseAccount(spotifyID, displayName, profilePic, email, followers, url,accessToken) {
   // The UID we'll assign to the user.
   const uid = `${spotifyID}`;
 
@@ -300,6 +333,7 @@ async function createFirebaseAccount(spotifyID, displayName, profilePic, email, 
       name: displayName,
       image: profilePic.url,
       email: email,
+      url:url,
       followers: followers,
     })
     .then(function() {
@@ -362,9 +396,10 @@ app.get('/token', function(req, res) {
           const userName = userResults.body['display_name'];
           const email = userResults.body['email'];
           const followers = userResults.body['followers'];
+          const url = userResults.body['external_urls']['spotify'];
 
           // Create a Firebase account and get the Custom Auth Token.
-          const firebaseToken = await createFirebaseAccount(spotifyUserID, userName, profilePic, email, followers,accessToken);
+          const firebaseToken = await createFirebaseAccount(spotifyUserID, userName, profilePic, email, followers,url,accessToken);
           // Serve an HTML page that signs the user in and updates the user profile.
           //pullData(accessToken,spotifyUserID);
           await pullData(spotifyUserID,accessToken);

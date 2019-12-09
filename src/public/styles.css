@@ -60,10 +60,11 @@ body{
 	background-color: #FF6C6C !important;
 	border-color: #FF6C6C !important;
 	color: white;
+	margin: 2px !important;
 }
 
 .profile-img {
-  border-radius: 50%;
+  border-radius: 50% !important;
   border: 5px solid white;
 }
 
@@ -113,7 +114,8 @@ body{
 .tab-nav-wrapper > ul > li > a {
   display: inline-block;
   width: 25%;
-  padding: .50rem 0;
+  padding: .5rem 0;
+  padding-bottom: 0px;
   margin: 0;
   text-decoration: none;
   color: #333;
@@ -145,43 +147,39 @@ hr {
   transition: .3s ease-in-out;
 }
 
-/* loader source: https://loading.io/css/ */
-
-.lds-ripple {
-  display: inline-block;
-  position: relative;
-  width: 200px;
-  height: 200px; 
-}
-.lds-ripple div {
-  position: absolute; 
-  border: 4px solid #FF23C0;
-  opacity: 1;
-  border-radius: 50%;
-  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-}
-.lds-ripple div:nth-child(2) {
-  animation-delay: -0.5s;
-}
-@keyframes lds-ripple {
-  0% {
-    top: 100px;
-    left: 100px;
-    width: 0;
-    height: 0;
-    opacity: 1;
-  }
-  100% {
-    top: 0px;
-    left: 0px;
-    width: 200px;
-    height: 200px;
-    opacity: 0;
-  }
-}
 
 .gradient-text{
 	background-image: -webkit-gradient(linear,0% 0%,25% 100%,from(#ff2323),to(#FF23C0));
 	-webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+
+.sidebar-match {
+  width: 300px;
+  position: fixed;
+  z-index: 1;
+/*
+  top: 20px;
+  left: 10px;
+*/
+/*  background-color: gray;*/
+  overflow-x: hidden;
+  border-radius: 25px;
+  padding: 8px 0;
+}
+
+.mainbar {
+  margin-left: 350px; /* Same width as the sidebar + left position in px */
+  font-size: 16px; /* Increased text to enable scrolling */
+  padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 14px;}
+}
+
+.card-style {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
 }
