@@ -11,6 +11,7 @@ function Demo(){
     this.recentButton = document.getElementById('tab-button-one');
     this.artistButton = document.getElementById('tab-button-two');
     // this.playlistButton = document.getElementById('tab-button-three');
+    this.matchesButton = document.getElementById('matches');
 
     // this.signedOutCard = document.getElementById('demo-signed-out-card');
     // this.signedInCard = document.getElementById('demo-signed-in-card');
@@ -28,6 +29,7 @@ function Demo(){
     this.signInButtonTop.addEventListener('click', this.signIn.bind(this));
     this.signOutButton.addEventListener('click', this.signOut.bind(this));
     this.playlists.addEventListener('click', this.analyzePlaylists.bind(this));
+    this.matchesButton.addEventListener('click',this.goToMatches.bind(this));
     
     //chart event listeners
     this.recentButton.addEventListener('click', this.recentChart.bind(this));
@@ -45,6 +47,8 @@ function Demo(){
 Demo.prototype.onAuthStateChanged = async function(user) {
   if (user) {
     console.log("log in success");
+    window.location.href = '/' + '#' + user.uid;
+
 	$('#login').hide();
     $.fn.fullpage.destroy('all');
     $('#loggedin').show();
@@ -90,6 +94,12 @@ Demo.prototype.onAuthStateChanged = async function(user) {
       //this.signedInCard.style.display = 'none';
   }
 };
+
+Demo.prototype.goToMatches = function(){
+  console.log("current user: ",firebase.auth().currentUser);
+  window.location.href = './matches' + '#' + window.location.hash.substring(1);
+
+}
 
 // Initiates the sign-in flow using Spotify sign in in a popup.
 Demo.prototype.signIn = function() {
