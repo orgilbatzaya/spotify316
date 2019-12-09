@@ -1,5 +1,3 @@
-
-
 var oauthTemplate = Handlebars.getTemplate('oauth-template');
 var userProfileTemplate = Handlebars.getTemplate("user-profile-template");
 var topArtistsTemplate = Handlebars.getTemplate('top-artists-template');
@@ -10,6 +8,9 @@ function Demo(){
     this.signInButton = document.getElementById('sign-in-button');
     this.signInButtonTop = document.getElementById('sign-in-button-top');
     this.signOutButton = document.getElementById('sign-out-button');
+    this.recentButton = document.getElementById('tab-button-one');
+    this.artistButton = document.getElementById('tab-button-two');
+    // this.playlistButton = document.getElementById('tab-button-three');
 
     // this.signedOutCard = document.getElementById('demo-signed-out-card');
     // this.signedInCard = document.getElementById('demo-signed-in-card');
@@ -27,11 +28,18 @@ function Demo(){
     this.signInButtonTop.addEventListener('click', this.signIn.bind(this));
     this.signOutButton.addEventListener('click', this.signOut.bind(this));
     this.playlists.addEventListener('click', this.analyzePlaylists.bind(this));
+    
+    //chart event listeners
+    this.recentButton.addEventListener('click', this.recentChart.bind(this));
+    //this.artistButton.addEventListener('click', this.artistChart.bind(this));
+    // this.playlistButton.addEventListener('click', this.playlistButton.bind(this));
 
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged.bind(this));
 
   }.bind(this))
 }
+
+
 
 // Triggered on Firebase auth state change.
 Demo.prototype.onAuthStateChanged = async function(user) {
@@ -91,9 +99,6 @@ Demo.prototype.signIn = function() {
 Demo.prototype.signOut = function() {
   firebase.auth().signOut();
 };
-
-
- 
 
 Demo.prototype.analyzePlaylists = function() {
   var user = firebase.auth().currentUser;
@@ -162,6 +167,7 @@ Demo.prototype.analyzePlaylists = function() {
               }]
           },
           options: {
+              
               scales: {
                   yAxes: [{
                         ticks: {
@@ -178,118 +184,87 @@ Demo.prototype.analyzePlaylists = function() {
   //TODO: fully parse playlists and generate visuals using chartjs
 };
 
+//recent tracks data visualization
+
+Demo.prototype.recentChart = function() {
+    var userTracks = {
+      acousticness:0,
+      danceability:0,
+      energy:0,
+      instrumentalness:0,
+      speechiness:0,
+      valence:0 
+    }; 
+
+    console.log("you've clicked #1");
+    var user = firebase.auth().currentUser;
+    var uid = user.uid;
+    var db = firebase.firestore();
+
+    console.log(uid);
+
+	db.collection('recenttracks').doc(uid).get().then(function(doc) {
+    userTracks.acousticness += doc.data().agg_features.acousticness;
+    userTracks.danceability += doc.data().agg_features.danceability;
+    userTracks.energy += doc.data().agg_features.energy;
+    userTracks.instrumentalness += doc.data().agg_features.instrumentalness;
+    userTracks.speechiness += doc.data().agg_features.speechiness;
+    userTracks.valence += doc.data().agg_features.valence;
+    console.log([userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence]);
+   
+    var ctx = document.getElementById("chart-area").getContext('2d');
+
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
+            datasets: [{
+                data: [userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: 'Recent Track Qualities'
+          },
+            scales: {
+                yAxes: [{
+                      ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    
+
+
+      });
+    });
+
+
+    };
+
+Demo.prototype.artistChart = function() {
+  console.log("You've clicked button #2");
+};
+
+
 new Demo();
-
-// $(document).ready(function() {
-
-//         /**
-//          * Obtains parameters from the hash of the URL
-//          * @return Object
-//          */
-//         function getHashParams() {
-//           var hashParams = {};
-//           var e, r = /([^&;=]+)=?([^&;]*)/g,
-//               q = window.location.hash.substring(1);
-//           while ( e = r.exec(q)) {
-//              hashParams[e[1]] = decodeURIComponent(e[2]);
-//           }
-//           return hashParams;
-//         }
-//         var userProfileTemplate = Handlebars.getTemplate("user-profile-template"),
-//             userProfilePlaceholder = document.getElementById('user-profile');
-
-//         var topArtistsTemplate = Handlebars.getTemplate('top-artists-template'),
-//             topArtistsPlaceholder = document.getElementById('topartists');
-	
-// 		var topTracksTemplate = Handlebars.getTemplate('top-tracks-template'),
-//             topTracksPlaceholder = document.getElementById('toptracks');
-
-//         var oauthTemplate = Handlebars.getTemplate('oauth-template'),
-//             oauthPlaceholder = document.getElementById('oauth');
-
-//         var params = getHashParams();
-
-//         var access_token = params.access_token,
-//             refresh_token = params.refresh_token,
-//             error = params.error;
-
-//         if (error) {
-//           alert('There was an error during the authentication');
-//         } else {
-//           if (access_token) {
-//             // render oauth info
-//             oauthPlaceholder.innerHTML = oauthTemplate({
-//               access_token: access_token,
-//               refresh_token: refresh_token
-//             });
-//             console.log(access_token);
-//             $.ajax({
-//                 url: 'https://api.spotify.com/v1/me/top/artists',
-//                 headers: {
-//                   'Authorization': 'Bearer ' + access_token
-//                 },
-//                 success: function(response) {
-//                   topArtistsPlaceholder.innerHTML = topArtistsTemplate(response);
-
-//                   // $('#login').hide();
-//                   // $('#loggedin').show();
-//                   console.log(response);
-
-//                 }
-//             });
-//             console.log(access_token);
-			
-// 			$.ajax({
-//                 url: 'https://api.spotify.com/v1/me/top/tracks',
-//                 headers: {
-//                   'Authorization': 'Bearer ' + access_token
-//                 },
-//                 success: function(response) {
-//                   topTracksPlaceholder.innerHTML = topTracksTemplate(response);
-
-//                   // $('#login').hide();
-//                   // $('#loggedin').show();
-//                   console.log(response);
-
-//                 }
-//             });
-//             console.log(access_token);
-
-//             $.ajax({
-//                 url: 'https://api.spotify.com/v1/me',
-//                 headers: {
-//                   'Authorization': 'Bearer ' + access_token
-//                 },
-//                 success: function(response) {
-//                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-//                     console.log("log in success");
-//                   $('#login').hide();
-//                   $.fn.fullpage.destroy('all');
-//                   $('#loggedin').show();
-
-//                 }
-//             });
-
-//           } else {
-//               // render initial screen
-//               console.log("log in failed!");
-//               $('#login').show();
-//               $('#loggedin').hide();
-//           }
-
-//           document.getElementById('obtain-new-token').addEventListener('click', function() {
-//             $.ajax({
-//               url: '/refresh_token',
-//               data: {
-//                 'refresh_token': refresh_token
-//               }
-//             }).done(function(data) {
-//               access_token = data.access_token;
-//               oauthPlaceholder.innerHTML = oauthTemplate({
-//                 access_token: access_token,
-//                 refresh_token: refresh_token
-//               });
-//             });
-//           }, false);
-//         }
-//       });

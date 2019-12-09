@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Spotify316</title>
+	 <title>Spotify316</title>
   	<!-- meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -26,7 +26,10 @@
 	
 	  <!-- Icons -->
 	  <script src="https://kit.fontawesome.com/862904df26.js"></script>
-	  
+		
+	  <!-- Icons -->
+	  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
 	  <!-- fullpage plugin docs -->
 	  <link rel="stylesheet" type="text/css" href="./fullpage.css" />
 	  <script type="text/javascript" src="./fullpage.js"></script>
@@ -114,7 +117,7 @@
 
 	 
 	 <div id="loggedin">
-		 
+		
 		<nav class="navbar navbar-default navbar-expand-lg fixed-top">
 		  <a class="navbar-brand" href="#">Spotify316</a>
 		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-reorder" style="color:white"></i>
@@ -143,12 +146,14 @@
 						</div>
 					</div>
 				</div>
+				
 				<div class="col-lg-9">
-					<div class="dummy-pat-2 text-center"></div><br>
+					<!-- <div class="dummy-pat-2 text-center">Overview Data Vis. Goes Here</div><br> -->
+					
 					<div class="tab-nav-wrapper">
 					  <ul>
-						<li class="tab-button-one"><a href="#">Recent Trends</a></li><!--
-					 --><li class="tab-button-two"><a href="#">Top Tracks/Artists</a></li><!--
+						<li class="tab-button-one" id = "tab-button-one"><a href="#">Recent Trends</a></li><!--
+					 --><li class="tab-button-two"><a id = "tab-button-two" href="#">Top Tracks/Artists</a></li><!--
 					 --><li class="tab-button-three" id="playlists"><a href="#">Playlists</a></li><!--
 					 --><li class="tab-button-four"><a href="#">Followers</a></li>
 						<hr style="height: .25rem; border: 0px solid #ffda23; border-top-width: 1px;"/>
@@ -156,6 +161,7 @@
 					</div>
 					<div class="tab-content-wrapper">
 					  <div class="tab1-c">
+						<canvas id="chart-area" width = "1600" height = "900"></canvas>
 					  	<h4>Objectives and Plan</h4>
 					  	<p>Recent Trends is a section to analyze the top 50 recent songs</p>
 					  </div> 
