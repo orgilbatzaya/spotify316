@@ -56,6 +56,8 @@ Demo.prototype.onAuthStateChanged = async function(user) {
     var topTracksPlaceholder = this.topTracksPlaceholder;
 	  
     localStorage.setItem('access_token', access_token);
+	localStorage.setItem('uid', user.uid);
+
 	  
      //fill in users profile
     const user_profile = await firebase.firestore().collection('users').doc(user.uid).get();

@@ -59,11 +59,13 @@ app.get('/matches', async function(req, res) {
 	const docs = userData.docs;
 	for(let i = 0; i < docs.length; i++){
 		var person = {
+			id : '',
 			user_info: {},
 			recent_tracks: {},
 			top_tracks: {}
 		}
 		person.user_info = docs[i].data();
+		person.id = docs[i].id;
 		
 		var recentTracksData = await db.collection('recenttracks').doc(docs[i].id).get();
 		person.recent_tracks = recentTracksData.data();
