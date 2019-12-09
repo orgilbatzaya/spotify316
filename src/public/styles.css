@@ -114,7 +114,8 @@ body{
 .tab-nav-wrapper > ul > li > a {
   display: inline-block;
   width: 25%;
-  padding: .50rem 0;
+  padding: .5rem 0;
+  padding-bottom: 0px;
   margin: 0;
   text-decoration: none;
   color: #333;

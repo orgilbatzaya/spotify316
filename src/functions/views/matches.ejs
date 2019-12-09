@@ -43,9 +43,17 @@
 		<div class="container">
 <!--			<h1 class="gradient-text">Find your musical match!</h1>-->
 			
-			<div class="sidebar-match">
+			<div class="sidebar-match text-center">
 				<h3>Compare</h3>
-				<canvas id="myChart" width="400" height="400"></canvas>
+				<canvas id="myChart" width="400" height="400"></canvas><br>
+				<div class="btn-group btn-group-toggle" data-toggle="buttons">
+				  <label class="btn btn-light active">
+					<input type="radio" name="options" id="option1" autocomplete="off" checked> Top Tracks
+				  </label>
+				  <label class="btn btn-light">
+					<input type="radio" name="options" id="option2" autocomplete="off"> Recent Trends
+				  </label>
+				</div>				
 			</div>
 			<div class="mainbar">
 				<div class="row">
@@ -97,6 +105,11 @@
 						   curr_users[j].top_tracks.agg_features.valence];
 			addData(myChart, label, data);
 		}
+		
+	/*	function getActive(){
+			console.log( document.querySelector('.option_gender:checked').value );
+		}
+		document.querySelectorAll(".option_gender").forEach( input => input.addEventListener('click', getActive) );		*/
 
 		var ctx = document.getElementById('myChart').getContext('2d');
 		var myChart = new Chart(ctx, {
