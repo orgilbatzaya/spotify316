@@ -238,6 +238,7 @@ async function pullData(spotifyID,access_token){
   const topArtists = topArtistData.body.items;
   // console.log("TOP ARTISTS RETRIEVED ",topArtistData.body);
   // console.log(topArtists.length);
+
  
   var artistList = [];
   for(var k = 0; k < topArtists.length; k++){
@@ -299,7 +300,7 @@ async function pullData(spotifyID,access_token){
  *
  * @returns {Promise<string>} The Firebase custom auth token in a promise.
  */
-async function createFirebaseAccount(spotifyID, displayName, profilePic, email, followers, accessToken) {
+async function createFirebaseAccount(spotifyID, displayName, profilePic, email, followers, url,accessToken) {
   // The UID we'll assign to the user.
   const uid = `${spotifyID}`;
 
@@ -330,6 +331,7 @@ async function createFirebaseAccount(spotifyID, displayName, profilePic, email, 
       name: displayName,
       image: profilePic.url,
       email: email,
+      url:url,
       followers: followers,
     })
     .then(function() {
@@ -392,9 +394,10 @@ app.get('/token', function(req, res) {
           const userName = userResults.body['display_name'];
           const email = userResults.body['email'];
           const followers = userResults.body['followers'];
+          const url = userResults.body['external_urls']['spotify'];
 
           // Create a Firebase account and get the Custom Auth Token.
-          const firebaseToken = await createFirebaseAccount(spotifyUserID, userName, profilePic, email, followers,accessToken);
+          const firebaseToken = await createFirebaseAccount(spotifyUserID, userName, profilePic, email, followers,url,accessToken);
           // Serve an HTML page that signs the user in and updates the user profile.
           //pullData(accessToken,spotifyUserID);
           await pullData(spotifyUserID,accessToken);
