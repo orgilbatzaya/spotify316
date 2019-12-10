@@ -4,6 +4,7 @@ var topArtistsTemplate = Handlebars.getTemplate('top-artists-template');
 var topTracksTemplate = Handlebars.getTemplate('top-tracks-template');
 
 function Demo(){
+  firebase.auth().onAuthStateChanged(this.onAuthStateChanged.bind(this));
   document.addEventListener('DOMContentLoaded', function() {
     this.signInButton = document.getElementById('sign-in-button');
     this.signInButtonTop = document.getElementById('sign-in-button-top');
@@ -22,7 +23,7 @@ function Demo(){
 
     this.playlists = document.getElementById('playlists');
     this.playlistsBottom = document.getElementById('playlists-bottom');
-
+    this.recentText = document.getElementById('p-1');
 
     // Bind events.
     this.signInButton.addEventListener('click', this.signIn.bind(this));
@@ -32,15 +33,13 @@ function Demo(){
     this.matchesButton.addEventListener('click',this.goToMatches.bind(this));
     
     //chart event listeners
+    
     this.recentButton.addEventListener('click', this.recentChart.bind(this));
-    //this.artistButton.addEventListener('click', this.artistChart.bind(this));
+    this.artistButton.addEventListener('click', this.artistChart.bind(this));
     // this.playlistButton.addEventListener('click', this.playlistButton.bind(this));
-
-    firebase.auth().onAuthStateChanged(this.onAuthStateChanged.bind(this));
-
+    document.addEventListener('load', this.recentChart.bind(this));
   }.bind(this))
 }
-
 
 
 // Triggered on Firebase auth state change.
@@ -60,7 +59,7 @@ Demo.prototype.onAuthStateChanged = async function(user) {
     var topTracksPlaceholder = this.topTracksPlaceholder;
 	  
     localStorage.setItem('access_token', access_token);
-	localStorage.setItem('uid', user.uid);
+	  localStorage.setItem('uid', user.uid);
 
 	  
      //fill in users profile
@@ -75,7 +74,9 @@ Demo.prototype.onAuthStateChanged = async function(user) {
    //fill in users top trackcs
     const top_tracks = await firebase.firestore().collection('toptracks').doc(user.uid).get();
     topTracksPlaceholder.innerHTML = topTracksTemplate(top_tracks.data());
-
+    
+    // window.addEventListener('load', this.recentChart.bind(this));
+    this.recentChart();
 
          } else {
     // render initial screen
@@ -92,6 +93,7 @@ Demo.prototype.onAuthStateChanged = async function(user) {
       $('#loggedin').hide();
       //this.signedOutCard.style.display = 'block';
       //this.signedInCard.style.display = 'none';
+      
   }
 };
 
@@ -126,10 +128,62 @@ Demo.prototype.analyzePlaylists = function() {
     speechiness:0,
     valence:0 
   };
+    var userPlaylist1 = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  };
+    var userPlaylist2 = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  };
+    var userPlaylist3 = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  };
+  var chartData = [];
   var docRef = db.collection('playlists').get().then(function(querySnapshot){
     querySnapshot.forEach(function(doc){
       //console.log(doc.id, '=>', doc.data());
       if (doc.data().owner == uid){
+        if (userPlaylistCount == 0){
+          userPlaylist1.acousticness = doc.data().agg_features.acousticness;
+          userPlaylist1.danceability = doc.data().agg_features.danceability;
+          userPlaylist1.energy = doc.data().agg_features.energy;
+          userPlaylist1.instrumentalness = doc.data().agg_features.instrumentalness;
+          userPlaylist1.speechiness = doc.data().agg_features.speechiness;
+          userPlaylist1.valence = doc.data().agg_features.valence;
+          chartData[0] = {label:doc.data().name, data:[userPlaylist1.acousticness, userPlaylist1.danceability, userPlaylist1.energy, userPlaylist1.instrumentalness, userPlaylist1.speechiness, userPlaylist1.valence], backgroundColor: 'rgba(255, 99, 132, 0.2)'};
+        }
+        if (userPlaylistCount == 1){
+          userPlaylist2.acousticness = doc.data().agg_features.acousticness;
+          userPlaylist2.danceability = doc.data().agg_features.danceability;
+          userPlaylist2.energy = doc.data().agg_features.energy;
+          userPlaylist2.instrumentalness = doc.data().agg_features.instrumentalness;
+          userPlaylist2.speechiness = doc.data().agg_features.speechiness;
+          userPlaylist2.valence = doc.data().agg_features.valence;
+          chartData[1] = {label:doc.data().name, data:[userPlaylist2.acousticness, userPlaylist2.danceability, userPlaylist2.energy, userPlaylist2.instrumentalness, userPlaylist2.speechiness, userPlaylist2.valence], backgroundColor: 'rgba(54, 162, 235, 0.2)'};
+        }
+        if (userPlaylistCount == 2){
+          userPlaylist3.acousticness = doc.data().agg_features.acousticness;
+          userPlaylist3.danceability = doc.data().agg_features.danceability;
+          userPlaylist3.energy = doc.data().agg_features.energy;
+          userPlaylist3.instrumentalness = doc.data().agg_features.instrumentalness;
+          userPlaylist3.speechiness = doc.data().agg_features.speechiness;
+          userPlaylist3.valence = doc.data().agg_features.valence;
+          chartData[2] = {label:doc.data().name, data:[userPlaylist3.acousticness, userPlaylist3.danceability, userPlaylist3.energy, userPlaylist3.instrumentalness, userPlaylist3.speechiness, userPlaylist3.valence], backgroundColor: 'rgba(255, 206, 86, 0.2)'};
+        }
         // Add together aggregate data features, and keep a counter to divide by total number
         userPlaylistsAggFeatures.acousticness += doc.data().agg_features.acousticness;
         userPlaylistsAggFeatures.danceability += doc.data().agg_features.danceability;
@@ -149,34 +203,15 @@ Demo.prototype.analyzePlaylists = function() {
     userPlaylistsAggFeatures.valence /= userPlaylistCount;
     console.log(userPlaylistsAggFeatures);
   //return userPlaylistsAggFeatures;
+  chartData[userPlaylistCount] = {label:'Average', data:[userPlaylistsAggFeatures.acousticness, userPlaylistsAggFeatures.danceability, userPlaylistsAggFeatures.energy, userPlaylistsAggFeatures.instrumentalness, userPlaylistsAggFeatures.speechiness, userPlaylistsAggFeatures.valence], backgroundColor: 'rgba(153, 102, 255, 0.2)'};
   
-  //var myChart = new Chart(ctx, {...});
+  // Create chart
     var ctx = document.getElementById('myChart').getContext('2d');
       var myChart = new Chart(ctx, {
-          type: 'polarArea',
+          type: 'radar',
           data: {
               labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
-              datasets: [{
-                  label: 'Average Playlist Qualities',
-                  data: [userPlaylistsAggFeatures.acousticness, userPlaylistsAggFeatures.danceability, userPlaylistsAggFeatures.energy, userPlaylistsAggFeatures.instrumentalness, userPlaylistsAggFeatures.speechiness, userPlaylistsAggFeatures.valence],
-                  backgroundColor: [
-                      'rgba(255, 99, 132, 0.2)',
-                      'rgba(54, 162, 235, 0.2)',
-                      'rgba(255, 206, 86, 0.2)',
-                      'rgba(75, 192, 192, 0.2)',
-                      'rgba(153, 102, 255, 0.2)',
-                      'rgba(255, 159, 64, 0.2)'
-                  ],
-                  borderColor: [
-                      'rgba(255, 99, 132, 1)',
-                      'rgba(54, 162, 235, 1)',
-                      'rgba(255, 206, 86, 1)',
-                      'rgba(75, 192, 192, 1)',
-                      'rgba(153, 102, 255, 1)',
-                      'rgba(255, 159, 64, 1)'
-                  ],
-                  borderWidth: 1
-              }]
+              datasets: chartData
           },
           options: {
               
@@ -192,11 +227,84 @@ Demo.prototype.analyzePlaylists = function() {
 
   });
 
-
-  //TODO: fully parse playlists and generate visuals using chartjs
 };
 
 //recent tracks data visualization
+
+function recentChart(){
+  var userTracks = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  }; 
+
+  console.log("you've clicked #1");
+  var user = firebase.auth().currentUser;
+
+  var uid = user.uid;
+  var db = firebase.firestore();
+
+  console.log(uid);
+
+db.collection('recenttracks').doc(uid).get().then(function(doc) {
+  userTracks.acousticness += doc.data().agg_features.acousticness;
+  userTracks.danceability += doc.data().agg_features.danceability;
+  userTracks.energy += doc.data().agg_features.energy;
+  userTracks.instrumentalness += doc.data().agg_features.instrumentalness;
+  userTracks.speechiness += doc.data().agg_features.speechiness;
+  userTracks.valence += doc.data().agg_features.valence;
+  console.log([userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence]);
+ 
+  var ctx = document.getElementById("chart-area").getContext('2d');
+
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
+          datasets: [{
+              data: [userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence],
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Recent Track Qualities'
+        },
+          scales: {
+              yAxes: [{
+                    ticks: {
+                      beginAtZero: true
+                  }
+              }]
+          }
+      }
+  
+
+
+    });
+  });
+}
 
 Demo.prototype.recentChart = function() {
     var userTracks = {
@@ -210,6 +318,7 @@ Demo.prototype.recentChart = function() {
 
     console.log("you've clicked #1");
     var user = firebase.auth().currentUser;
+
     var uid = user.uid;
     var db = firebase.firestore();
 
@@ -274,8 +383,80 @@ Demo.prototype.recentChart = function() {
 
     };
 
+
 Demo.prototype.artistChart = function() {
-  console.log("You've clicked button #2");
+  var userTracks = {
+    acousticness:0,
+    danceability:0,
+    energy:0,
+    instrumentalness:0,
+    speechiness:0,
+    valence:0 
+  }; 
+
+  console.log("you've clicked #2");
+  var user = firebase.auth().currentUser;
+  var uid = user.uid;
+  var db = firebase.firestore();
+
+  console.log(uid);
+
+db.collection('toptracks').doc(uid).get().then(function(doc) {
+  userTracks.acousticness += doc.data().agg_features.acousticness;
+  userTracks.danceability += doc.data().agg_features.danceability;
+  userTracks.energy += doc.data().agg_features.energy;
+  userTracks.instrumentalness += doc.data().agg_features.instrumentalness;
+  userTracks.speechiness += doc.data().agg_features.speechiness;
+  userTracks.valence += doc.data().agg_features.valence;
+  console.log([userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence]);
+ 
+  var ctx = document.getElementById("two-chart").getContext('2d');
+
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
+          datasets: [{
+              data: [userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence],
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Top Track Qualities'
+        },
+          scales: {
+              yAxes: [{
+                    ticks: {
+                      beginAtZero: true
+                  }
+              }]
+          }
+      }
+  
+
+
+    });
+  });
+
 };
 
 
