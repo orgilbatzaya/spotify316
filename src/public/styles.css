@@ -114,7 +114,8 @@ body{
 .tab-nav-wrapper > ul > li > a {
   display: inline-block;
   width: 25%;
-  padding: .50rem 0;
+  padding: .5rem 0;
+  padding-bottom: 0px;
   margin: 0;
   text-decoration: none;
   color: #333;
@@ -153,10 +154,6 @@ hr {
     -webkit-text-fill-color: transparent;
 }
 
-.card {
-	border: 1px solid #ff2323;
-	border-radius: 20px;
-}
 
 .sidebar-match {
   width: 300px;
@@ -181,4 +178,8 @@ hr {
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 14px;}
+}
+
+.card-style {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
 }

@@ -17,8 +17,8 @@ const db = admin.firestore();
 // TODO: Configure the `spotify.client_id` and `spotify.client_secret` Google Cloud environment variables
 const SpotifyWebApi = require('spotify-web-api-node');
 const Spotify = new SpotifyWebApi({
-  clientId: 'c78526ebdf26433cbb293f2dc1fa32e6',
-  clientSecret: '7a6b0c4952c74b4293813ceb82046092',
+  clientId: 'c78526ebdf26433cbb293f2dc1fa32e6',//'b710ad793b2243fbbb1aac464e781a0e',//
+  clientSecret: '7a6b0c4952c74b4293813ceb82046092',//'b1c390703f904c52ace905c4d000f46d',
   redirectUri: 'http://localhost:9000/popup.html'//'https://spotify316-40ea2.firebaseapp.com/popup.html' // 'Your redirect uri
 
 });
@@ -27,7 +27,7 @@ const OAUTH_SCOPES = ['user-read-private', 'user-read-email', 'user-top-read','u
           'user-library-read','user-follow-read','user-follow-modify'];
 
 var global_access_tok = '';
-var spotify_id = ''
+var global_spotify_id = ''
 
 function createFirebaseToken(spotifyID) {
   // The uid we'll assign to the user.
@@ -40,26 +40,31 @@ var stateKey = '__session';// used to be 'spotify_auth_state' but google only re
 
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
+var bodyParser = require('body-parser')
+
 var cors = require('cors');
 
 var app = express();
 app.use(cors())
+    .use(bodyParser())
    .use(cookieParser());
 app.set('view engine', 'ejs');
 
 app.get('/matches', async function(req, res) {
 
 	const users = [];
-	
+  console.log("REQUEST: ",req.body);	
 	const userData = await db.collection('users').get();
 	const docs = userData.docs;
 	for(let i = 0; i < docs.length; i++){
 		var person = {
+			id : '',
 			user_info: {},
 			recent_tracks: {},
 			top_tracks: {}
 		}
 		person.user_info = docs[i].data();
+		person.id = docs[i].id;
 		
 		var recentTracksData = await db.collection('recenttracks').doc(docs[i].id).get();
 		person.recent_tracks = recentTracksData.data();
@@ -71,8 +76,7 @@ app.get('/matches', async function(req, res) {
 	
 	res.render('matches', {
 		users: users,
-        access_token: global_access_tok,
-        db:db
+    access_token: global_access_tok
 	});
 
 	
@@ -365,6 +369,7 @@ app.get('/token', function(req, res) {
           const email = userResults.body['email'];
           const followers = userResults.body['followers'];
           const url = userResults.body['external_urls']['spotify'];
+          global_spotify_id = spotifyUserID;
 
           // Create a Firebase account and get the Custom Auth Token.
           const firebaseToken = await createFirebaseAccount(spotifyUserID, userName, profilePic, email, followers,url,accessToken);
