@@ -42,13 +42,11 @@ var stateKey = '__session';// used to be 'spotify_auth_state' but google only re
 
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
-var bodyParser = require('body-parser')
 
 var cors = require('cors');
 
 var app = express();
 app.use(cors())
-    .use(bodyParser())
    .use(cookieParser());
 app.set('view engine', 'ejs');
 
