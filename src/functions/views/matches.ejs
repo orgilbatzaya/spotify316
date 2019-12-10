@@ -48,10 +48,10 @@
 				<canvas id="myChart" width="400" height="400"></canvas><br>
 				<div class="btn-group btn-group-toggle" data-toggle="buttons">
 				  <label class="btn btn-light active">
-					<input type="radio" name="options" id="option1" autocomplete="off" checked> Top Tracks
+					<input type="radio" onclick="topToggle()" name="options" id="option1" autocomplete="off" checked> Top Tracks
 				  </label>
 				  <label class="btn btn-light">
-					<input type="radio" name="options" id="option2" autocomplete="off"> Recent Trends
+					<input type="radio" onclick="recentToggle()" name="options" id="option2" autocomplete="off"> Recent Trends
 				  </label>
 				</div>				
 			</div>
@@ -64,7 +64,7 @@
  					 	<div class="col-lg-3" id="<%= users[j].id %>" style="margin:0px 0px 5px 0px !important; padding:0px !important;">
 							<div class="card text-center" id="<%= users[j].id %>" style="border-radius: 25px; overflow:hidden; margin: 5px; box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.07), 0 6px 20px 0 rgba(0, 0, 0, 0.07);"> <!-- border: 1px solid #ff2323; -->
 									<img class="card-img-top" src="<%= users[j].user_info.image %>" alt=" Profile Image" style="min-height:190px;">
-									<h3 style="color: #ff2323; padding-top: 10px;">90%</h3>
+									<h3 class="metric" id="<%= users[j].id %>" style="color: #ff2323; padding-top: 10px;">90%</h3>
 								<div class="card-body" style="padding-top:0px !important;">
 									<h5 class="card-title"><%= users[j].user_info.name %></h5>
 									<button type="button" onclick="compareUser(<%= j %>)" class="btn btn-lightred btn-primary btn-sm">Compare</button>
@@ -83,31 +83,102 @@
 	</span>
 
 	<script>
+		var curr_users_map = {};
 		var curr_users = JSON.parse($('#userJSON').text());
 		$('#userJSON').remove();
 		var user_self;
-		for(i = 0; i<curr_users.length; i++){
+		for(var i = 0; i<curr_users.length; i++){
 			if(curr_users[i].id == localStorage.getItem('uid')){
 				user_self = curr_users[i];
-				break;
+				//break;
+			} else {
+				try{
+					var id = curr_users[i].id;
+					curr_users_map[id] = {
+						"top":[
+						curr_users[i].top_tracks.agg_features.acousticness,
+						curr_users[i].top_tracks.agg_features.danceability,
+						curr_users[i].top_tracks.agg_features.energy,
+						curr_users[i].top_tracks.agg_features.instrumentalness,
+						curr_users[i].top_tracks.agg_features.speechiness,
+						curr_users[i].top_tracks.agg_features.valence
+						],
+						"recent":[
+						curr_users[i].recent_tracks.agg_features.acousticness,
+						curr_users[i].recent_tracks.agg_features.danceability,
+						curr_users[i].recent_tracks.agg_features.energy,
+						curr_users[i].recent_tracks.agg_features.instrumentalness,
+						curr_users[i].recent_tracks.agg_features.speechiness,
+						curr_users[i].recent_tracks.agg_features.valence
+						]
+					};
+					console.log(curr_users_map['1245731874'].top[0]);
+				} catch(e){
+					continue;
+				}
 			}
 		}
-
+		//remove current user from "matches"
 		$("#"+user_self.id+".card.text-center").remove();
 		$("#"+user_self.id+".col-lg-3").remove();
 
+
+		var top_toggle_elem = document.getElementById('option1');
+		var recent_toggle_elem = document.getElementById('option2');
+		top_toggle_elem.addEventListener("click", topMetric);
+		recent_toggle_elem.addEventListener("click", recentMetric);
+
+
+		// const breakdownButton = document.querySelectorAll('.metric');
+		// 	breakdownButton.forEach(function(btn) {
+		// 	  btn.addEventListener('onload', function() {
+			    
+		// 	  });
+		// 	});
+
+
+
+
+		var user_self_top_data = [
+			user_self.top_tracks.agg_features.acousticness,
+		   user_self.top_tracks.agg_features.danceability,
+		   user_self.top_tracks.agg_features.energy,
+		   user_self.top_tracks.agg_features.instrumentalness,
+		   user_self.top_tracks.agg_features.speechiness,
+		   user_self.top_tracks.agg_features.valence];
+
+		var user_self_recent_data = [
+			user_self.recent_tracks.agg_features.acousticness,
+			user_self.recent_tracks.agg_features.danceability,
+			user_self.recent_tracks.agg_features.energy,
+			user_self.recent_tracks.agg_features.instrumentalness,
+			user_self.recent_tracks.agg_features.speechiness,
+			user_self.recent_tracks.agg_features.valence,
+		];
+
+		var selected_user_top_data = [];
+
+		var selected_user_recent_data = [];
+
+		topMetric();
 				
 		function compareUser(j) {
 			console.log(j);
 			console.log(curr_users[j]);
 			var label = curr_users[j].user_info.name+"'s data";
-			var data = [curr_users[j].top_tracks.agg_features.acousticness,
+			selected_user_top_data = [curr_users[j].top_tracks.agg_features.acousticness,
 						   curr_users[j].top_tracks.agg_features.danceability,
 						   curr_users[j].top_tracks.agg_features.energy,
 						   curr_users[j].top_tracks.agg_features.instrumentalness,
 						   curr_users[j].top_tracks.agg_features.speechiness,
 						   curr_users[j].top_tracks.agg_features.valence];
-			addData(myChart, label, data);
+			selected_user_recent_data = [curr_users[j].recent_tracks.agg_features.acousticness,
+						   curr_users[j].recent_tracks.agg_features.danceability,
+						   curr_users[j].recent_tracks.agg_features.energy,
+						   curr_users[j].recent_tracks.agg_features.instrumentalness,
+						   curr_users[j].recent_tracks.agg_features.speechiness,
+						   curr_users[j].recent_tracks.agg_features.valence];
+			addData(myChart, label, selected_user_top_data);
 		}
 		
 	/*	function getActive(){
@@ -122,12 +193,13 @@
 				labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
 				datasets: [{
 					label: "Your data",
-					data: [user_self.top_tracks.agg_features.acousticness,
-						   user_self.top_tracks.agg_features.danceability,
-						   user_self.top_tracks.agg_features.energy,
-						   user_self.top_tracks.agg_features.instrumentalness,
-						   user_self.top_tracks.agg_features.speechiness,
-						   user_self.top_tracks.agg_features.valence],
+					data: user_self_top_data,
+					// data: [user_self.top_tracks.agg_features.acousticness,
+					// 	   user_self.top_tracks.agg_features.danceability,
+					// 	   user_self.top_tracks.agg_features.energy,
+					// 	   user_self.top_tracks.agg_features.instrumentalness,
+					// 	   user_self.top_tracks.agg_features.speechiness,
+					// 	   user_self.top_tracks.agg_features.valence],
 					
 					backgroundColor: 'rgba(255, 99, 132, 0.2)',
 					borderColor: 'rgba(255, 99, 132, 1)',
@@ -163,64 +235,68 @@
 			});
 			chart.update();
 		}
-		
+
+
+		function topToggle() {
+		    myChart.data.datasets[0].data = user_self_top_data;
+		    myChart.data.datasets[1].data = selected_user_top_data;
+		    myChart.update();
+		}
+
+		function recentToggle() {
+		    myChart.data.datasets[0].data = user_self_recent_data;
+		    myChart.data.datasets[1].data = selected_user_recent_data;
+		    myChart.update();
+		}
+
+		function cosineSim(A,B){
+		    var dotproduct=0;
+		    var mA=0;
+		    var mB=0;
+		    for(i = 0; i < A.length; i++){ // here you missed the i++
+		        dotproduct += (A[i] * B[i]);
+		        mA += (A[i]*A[i]);
+		        mB += (B[i]*B[i]);
+		    }
+		    mA = Math.sqrt(mA);
+		    mB = Math.sqrt(mB);
+		    var similarity = (dotproduct)/((mA)*(mB)) // here you needed extra brackets
+		    return similarity;
+		}
+
+		function recentMetric(){
+			var elements = document.getElementsByClassName("metric");
+			for(var i = 0; i<elements.length; i++){
+				var id = elements[i].id;
+				try{
+					var recent_agg = curr_users_map[id]["recent"];
+					var percentage =Math.floor(cosineSim(user_self_recent_data,recent_agg) * 100);
+					elements[i].innerText = percentage +"%";
+				} catch(e){
+					continue;
+				}
+			}
+		}
+
+		function topMetric(){
+			var elements = document.getElementsByClassName("metric");
+			for(var i = 0; i<elements.length; i++){
+				var id = elements[i].id;
+				try{
+					var top_agg = curr_users_map[id]["top"];
+					var percentage =Math.floor(cosineSim(user_self_top_data,top_agg) * 100);
+					elements[i].innerText = percentage +"%";
+				} catch(e){
+					continue;
+				}
+			}
+		}
 	</script>
-	
-  <script>
-    var users = "<%= users %>";
-    function assignButtons() {
-        var btns = document.getElementsByName("follow"); 
-        for (n=0; n < btns.length; n++) {
-            btns[n].id = String(n); 
-        }
-    }; 
 
-    assignButtons();
-
-    
-    document.addEventListener('click', function (event) {
-
-      if (event.target.id == '0') {
-        console.log('clicked Orgil');
-      }
-      if (event.target.id == '1') {
-        console.log('clicked Karen');
-      }
-      if (event.target.id == '2') {
-        console.log('clicked Jen');
-        console.log(typeof users);
-        console.log(users.length);
-        var token = "<%= access_token  %>";  
-        var follow_req = {
-          url: 'https://api.spotify.com/v1/me/following',
-          headers: { 'Authorization': 'Bearer ' + access_token,
-                    'Content-Type': 'application/json' },
-          type: 'user',
-          ids: '',
-          json: true
-        };
-
-                
-        // request.get(features_req, function(error, response, body) {
-        //   var features = body;
-        //   track_features.push(features);
-        //   // add audio features for each of user's tracks to field 'audio_features'
-        //   db.collection("users").doc(uid).update({
-        //     audio_features: track_features
-        //   }).then(function() {
-        //     //console.log("User audio features updated " + uid);
-        //   });
-        // });
-      
-      }
-
-      if (event.target.matches('.close')) {
-        // Run your code to close a modal
-      }
-
-    }, false);
-    
-  </script>
+		
+<!-- 	</script>
+ -->	
+  
 	<!-- Bootstrap JS -->
 	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
