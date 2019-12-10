@@ -212,16 +212,6 @@ Demo.prototype.analyzePlaylists = function() {
           data: {
               labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
               datasets: chartData
-          },
-          options: {
-              
-              scales: {
-                  yAxes: [{
-                        ticks: {
-                          beginAtZero: true
-                      }
-                  }]
-              }
           }
       });
 
