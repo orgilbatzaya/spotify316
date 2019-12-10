@@ -14,9 +14,12 @@ In order to make full usage and continue development one can:
  2. download the firebase-tools cli
  3. Create a developer account on Spotify - obtain a client id and client secret, click edit on the dashboard and set redirect uri to `http:localhost:5000/popup.html` for local testing
  4. Near lines 20-21 of functions/index.js replace the clientId and clientSecret properties with your obtained id and secret
+ 5. Create a firebase project on 
+ 
  5. ``npm install`` in the root directory
  5. cd to `/functions` and `npm install` here as well
- 6. 
+ 6. Go to https://firebase.google.com and create a firebase project with the ***Blaze*** plan - this is important since 
+ 
 
 
 ## Limitations
