@@ -303,6 +303,18 @@ db.collection('recenttracks').doc(uid).get().then(function(doc) {
 
 
     });
+
+    
+  });
+  
+  db.collection('recenttracks').doc(uid).get().then(function(doc) {
+      
+    for(var i = 1; i <= 10; i++) {
+      var name = "li-" + i;
+      console.log(name);
+      document.getElementById(name).innerHTML = doc.data().tracks[i-1].name
+      console.log(doc.data().tracks[i].name);
+    }
   });
 }
 
@@ -379,7 +391,15 @@ Demo.prototype.recentChart = function() {
 
       });
     });
-
+    db.collection('recenttracks').doc(uid).get().then(function(doc) {
+      
+      for(var i = 1; i <= 10; i++) {
+        var name = "li-" + i;
+        console.log(name);
+        document.getElementById(name).innerHTML = doc.data().tracks[i-1].name
+        console.log(doc.data().tracks[i].name);
+      }
+    });
 
     };
 
