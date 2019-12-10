@@ -11,7 +11,7 @@ function Demo(){
     this.signOutButton = document.getElementById('sign-out-button');
     this.recentButton = document.getElementById('tab-button-one');
     this.artistButton = document.getElementById('tab-button-two');
-    // this.playlistButton = document.getElementById('tab-button-three');
+    this.topArtistButton = document.getElementById('tab-button-four');
     this.matchesButton = document.getElementById('matches');
 
     // this.signedOutCard = document.getElementById('demo-signed-out-card');
@@ -36,7 +36,7 @@ function Demo(){
     
     this.recentButton.addEventListener('click', this.recentChart.bind(this));
     this.artistButton.addEventListener('click', this.artistChart.bind(this));
-    // this.playlistButton.addEventListener('click', this.playlistButton.bind(this));
+    this.topArtistButton.addEventListener('click', this.topArtist.bind(this));
     document.addEventListener('load', this.recentChart.bind(this));
   }.bind(this))
 }
@@ -113,6 +113,23 @@ Demo.prototype.signIn = function() {
 Demo.prototype.signOut = function() {
   firebase.auth().signOut();
 };
+
+Demo.prototype.topArtist = function() {
+
+  var user = firebase.auth().currentUser;
+  var uid = user.uid;
+  var db = firebase.firestore();
+  
+  db.collection('topartists').doc(uid).get().then(function(doc) {
+    for(var i = 1; i <= 10; i++) {
+      var name = "li-art-" + i;
+      console.log(name);
+      document.getElementById(name).innerHTML = doc.data().artists[i-1];
+      console.log(doc.data().artists[i-1]);
+    }
+  });
+};
+
 
 Demo.prototype.analyzePlaylists = function() {
   var user = firebase.auth().currentUser;
@@ -599,14 +616,7 @@ db.collection('toptracks').doc(uid).get().then(function(doc) {
     });
   });
   
-  db.collection('topartists').doc(uid).get().then(function(doc) {
-    for(var i = 1; i <= 10; i++) {
-      var name = "li-art-" + i;
-      console.log(name);
-      document.getElementById(name).innerHTML = doc.data().artists[i-1];
-      console.log(doc.data().artists[i-1]);
-    }
-  });
+  
 
 };
 
