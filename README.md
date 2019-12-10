@@ -19,7 +19,8 @@ npm install -g firebase-tools
 ```
  3. Create a developer account on Spotify -> create a new project -> obtain a client id and client secret, click edit on the project dashboard and set the redirect uri to `http:localhost:5000/popup.html` for local testing
  4. Near lines 20-21 of `functions/index.js` replace the clientId and clientSecret fields with your obtained id and secret 
- 5. Make sure the redirectUri field in the SpotifyWebApi Constructor ***matches exactly*** the redirect uri you gave when configuring your spotify developer project 
+ 5. On line 22 of the same file, make sure the redirectUri field in the SpotifyWebApi Constructor ***matches exactly*** the redirect uri you gave when configuring your spotify developer project 
+ 5. Go to line 131 of `/public/popup.html` and change the value of `window.location.href` to `'http://localhost:9000/redirect'`
  5. ``npm install`` in the root directory
  5. cd to `/functions` and `npm install` here as well
  6.  cd to `/src` directory and run `firebase serve --only hosting,functions` - this gives you a localhost:5000 to run locally
@@ -29,4 +30,4 @@ npm install -g firebase-tools
 
 * Our current implementation does not scale well to a growing database of users. The "matches" feature will continue to slow down as more users login since the user's data is saved permanently and the app currently scans the entire database each time the "matches" tab is clicked on - Some fixes could include deleting old documents up to some threshold and writing more optimized code
 * The "Discover" feature does not analyze and compare any new data with the user's. This would be straightforward if we had more time.
-* The "Matches" feature currently does not support the capability to "follow" someone on Spotify. It is also limited in the fact that the matching algorithm is very basic - simply the cosine similarity between the user's average audio features of their recently listened to tracks and their top tracks and those of a selected user. With more time, a more robust algorithm could be developed
+* The "Matches" feature currently does not support the capability to "follow" someone on Spotify. It is also limited in the fact that the matching algorithm is very basic - simply the cosine similarity between the user's average audio features of their recently listened to tracks/top tracks and those of a selected user. With more time, a more robust algorithm could be developed
