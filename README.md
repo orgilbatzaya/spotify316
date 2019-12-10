@@ -5,7 +5,6 @@
   * Inside the `/src` directory, our project is segmented into two main subdirectories, `functions` (which holds server side code and configurations) and `public` (which contains static files). This structure is enforced by Firebase Hosting/Functions as it allows for a clean separation of client-side and server-side code. 
   * The main files to look for in functions are `index.js`, which contains the authorization flow and data acquisition from Spotify, and `/views/matches.ejs` which is a server side template EJS (Embedded Javascript) file that contains the UI and logic behind the "matches" feature
   * `/public` contains a variety of HTML/CSS/JS files essential to our UI such as `login.js` or `index.html` and also Handlebars templates in `/templates` which offered us a dynamic way to serve static content. 
-  * Ignore app.js as we now use `/functions/index.js` as our main application entry point
   
 ## Usage
 
