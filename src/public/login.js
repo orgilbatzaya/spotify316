@@ -212,16 +212,6 @@ Demo.prototype.analyzePlaylists = function() {
           data: {
               labels: ['acousticness', 'danceability', 'energy', 'instrumentalness', 'speechiness', 'valence'],
               datasets: chartData
-          },
-          options: {
-              
-              scales: {
-                  yAxes: [{
-                        ticks: {
-                          beginAtZero: true
-                      }
-                  }]
-              }
           }
       });
 
@@ -303,6 +293,18 @@ db.collection('recenttracks').doc(uid).get().then(function(doc) {
 
 
     });
+
+    
+  });
+  
+  db.collection('recenttracks').doc(uid).get().then(function(doc) {
+      
+    for(var i = 1; i <= 10; i++) {
+      var name = "li-" + i;
+      console.log(name);
+      document.getElementById(name).innerHTML = doc.data().tracks[i-1].name;
+      console.log(doc.data().tracks[i-1].name);
+    }
   });
 }
 
@@ -379,7 +381,15 @@ Demo.prototype.recentChart = function() {
 
       });
     });
-
+    db.collection('recenttracks').doc(uid).get().then(function(doc) {
+      
+      for(var i = 1; i <= 10; i++) {
+        var name = "li-" + i;
+        console.log(name);
+        document.getElementById(name).innerHTML = doc.data().tracks[i-1].name;
+        console.log(doc.data().tracks[i].name);
+      }
+    });
 
     };
 
@@ -411,6 +421,13 @@ db.collection('toptracks').doc(uid).get().then(function(doc) {
   console.log([userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence]);
  
   var ctx = document.getElementById("two-chart").getContext('2d');
+
+  for(var i = 1; i <= 10; i++) {
+    var name = "li-tracks-" + i;
+    console.log(name);
+    document.getElementById(name).innerHTML = doc.data().tracks[i-1].name;
+    console.log(doc.data().tracks[i-1]);
+  }
 
   var myChart = new Chart(ctx, {
       type: 'bar',
@@ -455,6 +472,15 @@ db.collection('toptracks').doc(uid).get().then(function(doc) {
 
 
     });
+  });
+  
+  db.collection('topartists').doc(uid).get().then(function(doc) {
+    for(var i = 1; i <= 10; i++) {
+      var name = "li-art-" + i;
+      console.log(name);
+      document.getElementById(name).innerHTML = doc.data().artists[i-1];
+      console.log(doc.data().artists[i-1]);
+    }
   });
 
 };

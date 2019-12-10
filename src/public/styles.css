@@ -81,6 +81,42 @@ body{
 	margin: 2px !important;
 }
 
+.column {
+  float: left;
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.profile {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+}
+.profile img {
+  min-width: 50%;
+  min-height: 50%;
+  width: auto;
+  height: 200px;
+  width: 200px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border-radius: 50% !important;
+  border: 5px solid white;
+}
+
 .profile-img {
   border-radius: 50% !important;
   border: 5px solid white;

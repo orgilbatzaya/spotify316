@@ -98,25 +98,28 @@
 					  <p>Ever wonder how your playlist stacks up?</p>
 					  <p>Measure your favorite tracks by their energy, danceability, and more!</p>
 					</div>
-
-					
 				  </div>
 				</div>				 
 			 </div>
 			 <div class="section" id="full-page-3">
 				 <div class="text-center">
-					 <h2>Meet Our Team</h2><br><br><br>
+					 <br><br><h2>Meet Our Team</h2><br>
 				 </div>
 				 <div class="container">
 					<div class="row text-center">
-
-					  <div class="col-lg-6"><img class="profile-img" src="https://via.placeholder.com/200"></div>
-					  <div class="col-lg-6"><img class="profile-img" src="https://via.placeholder.com/200"></div>
+<!--
+						<div class="col-lg-12"><center>
+							<div class = "profile" style="float: left"><img src="images/avivah.jpg"></div>
+							<div class = "profile" style="float: left"><img src="images/cindy.jpg"></div>
+						</center></div>
+-->
+						<div class="col-lg-7"><center><div class = "profile"><img src="images/avivah.jpg"></div></center></div>
+						<div class="col-lg-5" style="margin-left:-50px !important;"><div class = "profile"><img src="images/cindy.jpg"></div></div>
 					</div>
 					<div class="row text-center">
-					  <div class="col-lg-4"><img class="profile-img" src="https://via.placeholder.com/200"></div>
-					  <div class="col-lg-4"><img class="profile-img" src="https://via.placeholder.com/200"></div>
-					  <div class="col-lg-4"><img class="profile-img" src="https://via.placeholder.com/200"></div>
+						<div class="col-lg-4"><center><div class = "profile"><img src="images/jen.jpg"></div></center></div>
+						<div class="col-lg-4"><center><div class = "profile"><img src="images/karen.jpg"></div></center></div>
+						<div class="col-lg-4"><center><div class = "profile"><img src="images/orgil.jpg"></div></center></div>
 					</div>					 
 				 </div>
 			 </div>
@@ -169,22 +172,68 @@
 					<div class="tab-content-wrapper">
 					  <div class="tab1-c" style=display:block>
 						<canvas id="chart-area" width = "1600" height = "900"></canvas>
-					  	<h4>Recent Trends</h4>
-						<p>Recent Trends is a section to analyze the top 50 recent songs.</p>
-						<li id = "li-1"></li>
-						<li id = "li-1"></li>
-						<li id = "li-1"></li>
-						<li id = "li-1"></li>
-						<li id = "li-1"></li>
-						<li id = "li-1"></li>
-						<li id = "li-1"></li>
+						<div class="row">
+							<div class="column">
+								<br>
+								<br>
+									<h4>Recent Trends</h4>
+								  <p>Recent Trends is a section to analyze the top 10 recent songs. Features are measured on a 0.0 - 1.0 scale.</p>
+								  <li id = "li-1"></li>
+								  <li id = "li-2"></li>
+								  <li id = "li-3"></li>
+								  <li id = "li-4"></li>
+								  <li id = "li-5"></li>
+								  <li id = "li-6"></li>
+								  <li id = "li-7"></li>
+								  <li id = "li-8"></li>
+								  <li id = "li-9"></li>
+								  <li id = "li-10"></li>
+							</div>
+							<div class="column"></div>
+						</div>
+						
 					  </div> 
-					  <div class="tab2-c"><p>This is for Data Visuals</p>
+					  <div class="tab2-c"><p>Top Artists and Tracks</p>
 						<canvas id="two-chart" width = "1600" height = "900"></canvas>
+						<div class="row">
+								<div class="column">
+									<br>
+									<br>
+										<h4>Top Tracks</h4>
+									  <p>Top Tracks is a section to analyze the top 10 tracks you listen to. Features are measured on a 0.0 - 1.0 scale.</p>
+									  <li id = "li-tracks-1"></li>
+									  <li id = "li-tracks-2"></li>
+									  <li id = "li-tracks-3"></li>
+									  <li id = "li-tracks-4"></li>
+									  <li id = "li-tracks-5"></li>
+									  <li id = "li-tracks-6"></li>
+									  <li id = "li-tracks-7"></li>
+									  <li id = "li-tracks-8"></li>
+									  <li id = "li-tracks-9"></li>
+									  <li id = "li-tracks-10"></li>
+								</div>
+								
+								<div class="column">
+									<br>
+									<br>
+									<h4>Top Artists</h4>
+									<p>Top Artists are the top 10 artists you listen to on a daily basis. Take a look at who some of your favorite artists are!</p>
+									<li id = "li-art-1"></li>
+									<li id = "li-art-2"></li>
+									<li id = "li-art-3"></li>
+									<li id = "li-art-4"></li>
+									<li id = "li-art-5"></li>
+									<li id = "li-art-6"></li>
+									<li id = "li-art-7"></li>
+									<li id = "li-art-8"></li>
+									<li id = "li-art-9"></li>
+									<li id = "li-art-10"></li>
+								</div>
+							</div>
 						</div> 
 					  <div class="tab3-c" id="playlists-bottom"><div class="container">
             			<canvas id="myChart" width="300" height="300"></canvas></div></div> 
-					  <div class="tab4-c"><p>This is for Top Artists and Tracks</p></div> 
+					  <div class="tab4-c"><p>Followers</p></div> 
 					</div>					
 				</div>
 			  </div>
