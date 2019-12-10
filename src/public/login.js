@@ -248,6 +248,48 @@ db.collection('recenttracks').doc(uid).get().then(function(doc) {
   userTracks.valence += doc.data().agg_features.valence;
   console.log([userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence]);
  
+  if(userTracks.acousticness < 0.5) {
+    document.getElementById("p-1").innerHTML = "Your acousticness is " + doc.data().agg_features.acousticness.toFixed(3) + ". " + "Your acousticness is fairly low!"
+  }
+  else {
+    document.getElementById("p-1").innerHTML = "Your acousticness is " + doc.data().agg_features.acousticness.toFixed(3) + ". " + "Your acousticness is really high! Have you been listening to country music lately?"
+  }
+
+  if(userTracks.danceability < 0.5) {
+    document.getElementById("p-2").innerHTML = "Your danceability is " + doc.data().agg_features.danceability.toFixed(3) + ". " + "The songs you've been listening to have been pretty mellow! They're slow in tempo and have weak beat strength and low rhythm stability."
+  }
+  else {
+    document.getElementById("p-2").innerHTML = "Your danceability is " + doc.data().agg_features.danceability.toFixed(3)  + ". " + "Wow! You must really like dancing! The songs you've been listening to are fast in tempo, high in rhythm stability, and high in beat strength."
+  }
+
+  if(userTracks.energy < 0.5) {
+    document.getElementById("p-3").innerHTML = "Your energy is " + doc.data().agg_features.energy.toFixed(3) + ". " + "Not a lot of energy lately? Your songs have low intensity and activity - maybe you're listening to a lot of classical music lately?" 
+  }
+  else {
+    document.getElementById("p-3").innerHTML = "Your energy is " + doc.data().agg_features.energy.toFixed(3)  + ". " + "Feeling fast, loud, and noisy? Have you been listening to lots of death metal? Your songs are very high in energy!"
+  }
+
+  if(userTracks.instrumentalness < 0.5) {
+    document.getElementById("p-4").innerHTML = "Your instrumentalness is " + doc.data().agg_features.instrumentalness.toFixed(3) +". " +  "A lot of your songs don't contain any vocals."
+  }
+  else {
+    document.getElementById("p-4").innerHTML = "Your instrumentalness is " + doc.data().agg_features.instrumentalness.toFixed(3)  + ". " + "You must really like rap or spoken word! Your songs have lots of vocals."
+  }
+
+  if(userTracks.speechiness < 0.5) {
+    document.getElementById("p-5").innerHTML = "Your speechiness is " + doc.data().agg_features.speechiness.toFixed(3) +". " +  "Your songs most likely represent music and non-speech like tracks."
+  }
+  else {
+    document.getElementById("p-5").innerHTML = "Your speechiness is " + doc.data().agg_features.speechiness.toFixed(3)  +". " +  "Your songs most likely represent tracks made entirely of spoken word. These include talk shows, audio books, or poetry!"
+  }
+
+  if(userTracks.valence < 0.5) {
+    document.getElementById("p-6").innerHTML = "Your valence is " + doc.data().agg_features.valence.toFixed(3) + ". " + ":( Sorry to hear that you've been listening to a lot of sad music lately. Your songs are correlated with negative feelings like sadness and anger."
+    }
+  else {
+    document.getElementById("p-6").innerHTML = "Your valence is " + doc.data().agg_features.valence.toFixed(3)  +". " +  ":) Happy to hear that you're ina positive mood! Your songs are correlated with happiness and cheerfulness!"
+  }
+
   var ctx = document.getElementById("chart-area").getContext('2d');
 
   var myChart = new Chart(ctx, {
@@ -333,6 +375,49 @@ Demo.prototype.recentChart = function() {
     userTracks.instrumentalness += doc.data().agg_features.instrumentalness;
     userTracks.speechiness += doc.data().agg_features.speechiness;
     userTracks.valence += doc.data().agg_features.valence;
+
+    if(userTracks.acousticness < 0.5) {
+      document.getElementById("p-1").innerHTML = "Your acousticness is " + doc.data().agg_features.acousticness.toFixed(3) + ". " + "Your acousticness is fairly low!"
+    }
+    else {
+      document.getElementById("p-1").innerHTML = "Your acousticness is " + doc.data().agg_features.acousticness.toFixed(3) + ". " + "Your acousticness is really high! Have you been listening to country music lately?"
+    }
+  
+    if(userTracks.danceability < 0.5) {
+      document.getElementById("p-2").innerHTML = "Your danceability is " + doc.data().agg_features.danceability.toFixed(3) + ". " + "The songs you've been listening to have been pretty mellow! They're slow in tempo and have weak beat strength and low rhythm stability."
+    }
+    else {
+      document.getElementById("p-2").innerHTML = "Your danceability is " + doc.data().agg_features.danceability.toFixed(3)  + ". " + "Wow! You must really like dancing! The songs you've been listening to are fast in tempo, high in rhythm stability, and high in beat strength."
+    }
+  
+    if(userTracks.energy < 0.5) {
+      document.getElementById("p-3").innerHTML = "Your energy is " + doc.data().agg_features.energy.toFixed(3) + ". " + "Not a lot of energy lately? Your songs have low intensity and activity - maybe you're listening to a lot of classical music lately?" 
+    }
+    else {
+      document.getElementById("p-3").innerHTML = "Your energy is " + doc.data().agg_features.energy.toFixed(3)  + ". " + "Feeling fast, loud, and noisy? Have you been listening to lots of death metal? Your songs are very high in energy!"
+    }
+  
+    if(userTracks.instrumentalness < 0.5) {
+      document.getElementById("p-4").innerHTML = "Your instrumentalness is " + doc.data().agg_features.instrumentalness.toFixed(3) +". " +  "A lot of your songs don't contain any vocals."
+    }
+    else {
+      document.getElementById("p-4").innerHTML = "Your instrumentalness is " + doc.data().agg_features.instrumentalness.toFixed(3)  + ". " + "You must really like rap or spoken word! Your songs have lots of vocals."
+    }
+  
+    if(userTracks.speechiness < 0.5) {
+      document.getElementById("p-5").innerHTML = "Your speechiness is " + doc.data().agg_features.speechiness.toFixed(3) +". " +  "Your songs most likely represent music and non-speech like tracks."
+    }
+    else {
+      document.getElementById("p-5").innerHTML = "Your speechiness is " + doc.data().agg_features.speechiness.toFixed(3)  +". " +  "Your songs most likely represent tracks made entirely of spoken word. These include talk shows, audio books, or poetry!"
+    }
+  
+    if(userTracks.valence < 0.5) {
+      document.getElementById("p-6").innerHTML = "Your valence is " + doc.data().agg_features.valence.toFixed(3) + ". " + ":( Sorry to hear that you've been listening to a lot of sad music lately. Your songs are correlated with negative feelings like sadness and anger."
+      }
+    else {
+      document.getElementById("p-6").innerHTML = "Your valence is " + doc.data().agg_features.valence.toFixed(3)  +". " +  ":) Happy to hear that you're ina positive mood! Your songs are correlated with happiness and cheerfulness!"
+    }
+
     console.log([userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence]);
    
     var ctx = document.getElementById("chart-area").getContext('2d');
@@ -419,7 +504,47 @@ db.collection('toptracks').doc(uid).get().then(function(doc) {
   userTracks.speechiness += doc.data().agg_features.speechiness;
   userTracks.valence += doc.data().agg_features.valence;
   console.log([userTracks.acousticness, userTracks.danceability, userTracks.energy, userTracks.instrumentalness, userTracks.speechiness, userTracks.valence]);
- 
+        if(userTracks.acousticness < 0.5) {
+          document.getElementById("p-7").innerHTML = "Your acousticness is " + doc.data().agg_features.acousticness.toFixed(3) + ". " + "Your acousticness is fairly low!"
+        }
+        else {
+          document.getElementById("p-7").innerHTML = "Your acousticness is " + doc.data().agg_features.acousticness.toFixed(3) + ". " + "Your acousticness is really high! Have you been listening to country music lately?"
+        }
+
+        if(userTracks.danceability < 0.5) {
+          document.getElementById("p-8").innerHTML = "Your danceability is " + doc.data().agg_features.danceability.toFixed(3) + ". " + "The songs you've been listening to have been pretty mellow! They're slow in tempo and have weak beat strength and low rhythm stability."
+        }
+        else {
+          document.getElementById("p-8").innerHTML = "Your danceability is " + doc.data().agg_features.danceability.toFixed(3)  + ". " + "Wow! You must really like dancing! The songs you've been listening to are fast in tempo, high in rhythm stability, and high in beat strength."
+        }
+
+        if(userTracks.energy < 0.5) {
+          document.getElementById("p-9").innerHTML = "Your energy is " + doc.data().agg_features.energy.toFixed(3) + ". " + "Not a lot of energy lately? Your songs have low intensity and activity - maybe you're listening to a lot of classical music lately?" 
+        }
+        else {
+          document.getElementById("p-9").innerHTML = "Your energy is " + doc.data().agg_features.energy.toFixed(3)  + ". " + "Feeling fast, loud, and noisy? Have you been listening to lots of death metal? Your songs are very high in energy!"
+        }
+
+        if(userTracks.instrumentalness < 0.5) {
+          document.getElementById("p-10").innerHTML = "Your instrumentalness is " + doc.data().agg_features.instrumentalness.toFixed(3) +". " +  "A lot of your songs don't contain any vocals."
+        }
+        else {
+          document.getElementById("p-10").innerHTML = "Your instrumentalness is " + doc.data().agg_features.instrumentalness.toFixed(3)  + ". " + "You must really like rap or spoken word! Your songs have lots of vocals."
+        }
+
+        if(userTracks.speechiness < 0.5) {
+          document.getElementById("p-11").innerHTML = "Your speechiness is " + doc.data().agg_features.speechiness.toFixed(3) +". " +  "Your songs most likely represent music and non-speech like tracks."
+        }
+        else {
+          document.getElementById("p-11").innerHTML = "Your speechiness is " + doc.data().agg_features.speechiness.toFixed(3)  +". " +  "Your songs most likely represent tracks made entirely of spoken word. These include talk shows, audio books, or poetry!"
+        }
+
+        if(userTracks.valence < 0.5) {
+          document.getElementById("p-12").innerHTML = "Your valence is " + doc.data().agg_features.valence.toFixed(3) + ". " + ":( Sorry to hear that you've been listening to a lot of sad music lately. Your songs are correlated with negative feelings like sadness and anger."
+          }
+        else {
+          document.getElementById("p-12").innerHTML = "Your valence is " + doc.data().agg_features.valence.toFixed(3)  +". " +  ":) Happy to hear that you're ina positive mood! Your songs are correlated with happiness and cheerfulness!"
+        }
   var ctx = document.getElementById("two-chart").getContext('2d');
 
   for(var i = 1; i <= 10; i++) {

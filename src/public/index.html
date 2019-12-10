@@ -171,12 +171,14 @@
 					</div>
 					<div class="tab-content-wrapper">
 					  <div class="tab1-c" style=display:block>
+						<h4>Data Visualization of Recent Trends</h4>
+						<br>
 						<canvas id="chart-area" width = "1600" height = "900"></canvas>
 						<div class="row">
 							<div class="column">
 								<br>
 								<br>
-									<h4>Recent Trends</h4>
+								<h4>Recent Trends</h4>
 								  <p>Recent Trends is a section to analyze the top 10 recent songs. Features are measured on a 0.0 - 1.0 scale.</p>
 								  <li id = "li-1"></li>
 								  <li id = "li-2"></li>
@@ -189,11 +191,23 @@
 								  <li id = "li-9"></li>
 								  <li id = "li-10"></li>
 							</div>
-							<div class="column"></div>
+							<div class="column">
+								<br>
+								<br>
+								<h4>What do these features mean?</h4>
+								<p id = "p-1"></p>
+								<p id = "p-2"></p>
+								<p id = "p-3"></p>
+								<p id = "p-4"></p>
+								<p id = "p-5"></p>
+								<p id = "p-6"></p>
+							</div>
 						</div>
 						
 					  </div> 
-					  <div class="tab2-c"><p>Top Artists and Tracks</p>
+					  <div class="tab2-c">
+						<h4>Data Visualization of Top Artists/Top Tracks</h4>
+						<br>
 						<canvas id="two-chart" width = "1600" height = "900"></canvas>
 						<div class="row">
 								<div class="column">
@@ -230,8 +244,20 @@
 									<li id = "li-art-10"></li>
 								</div>
 							</div>
+							<br>
+							<br>
+							<h4>What do these features mean?</h4>
+							<p id = "p-7"></p>
+							<p id = "p-8"></p>
+							<p id = "p-9"></p>
+							<p id = "p-10"></p>
+							<p id = "p-11"></p>
+							<p id = "p-12"></p>
 						</div> 
 					  <div class="tab3-c" id="playlists-bottom"><div class="container">
+						<h4>Data Visualization of Playlists</h4>
+						<br>
+						<br>
             			<canvas id="myChart" width="300" height="300"></canvas></div></div> 
 					  <div class="tab4-c"><p>Followers</p></div> 
 					</div>					
@@ -239,7 +265,7 @@
 			  </div>
 			  <div class="row">
 				 <div id="oauth"></div>
-				 <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+				 <button class="btn btn-default" id="obtain-new-token"></button>
 				</div>
 			</div>		 
 		 			 
