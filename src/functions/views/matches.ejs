@@ -55,12 +55,14 @@
 				  </label>
 				</div>				
 			</div>
+
+			
 			<div class="mainbar">
 				<div class="row">
 					<div class="card-deck">
 						<% for(j=0; j<users.length; j++) { %>
-					 	<div class="col-lg-3" style="margin:0px 0px 5px 0px !important; padding:0px !important;">
-							<div class="card text-center" style="border-radius: 25px; overflow:hidden; margin: 5px; box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.07), 0 6px 20px 0 rgba(0, 0, 0, 0.07);"> <!-- border: 1px solid #ff2323; -->
+ 					 	<div class="col-lg-3" id="<%= users[j].id %>" style="margin:0px 0px 5px 0px !important; padding:0px !important;">
+							<div class="card text-center" id="<%= users[j].id %>" style="border-radius: 25px; overflow:hidden; margin: 5px; box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.07), 0 6px 20px 0 rgba(0, 0, 0, 0.07);"> <!-- border: 1px solid #ff2323; -->
 									<img class="card-img-top" src="<%= users[j].user_info.image %>" alt=" Profile Image" style="min-height:190px;">
 									<h3 style="color: #ff2323; padding-top: 10px;">90%</h3>
 								<div class="card-body" style="padding-top:0px !important;">
@@ -81,17 +83,19 @@
 	</span>
 
 	<script>
-		
 		var curr_users = JSON.parse($('#userJSON').text());
 		$('#userJSON').remove();
 		var user_self;
-		console.log("LENFGTH, ",curr_users.length);
 		for(i = 0; i<curr_users.length; i++){
 			if(curr_users[i].id == localStorage.getItem('uid')){
 				user_self = curr_users[i];
 				break;
 			}
 		}
+
+		$("#"+user_self.id+".card.text-center").remove();
+		$("#"+user_self.id+".col-lg-3").remove();
+
 				
 		function compareUser(j) {
 			console.log(j);
