@@ -94,8 +94,8 @@ body{
 }
 
 .profile {
-  width: 300px;
-  height: 300px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   position: relative;
   overflow: hidden;
@@ -113,6 +113,11 @@ body{
   -moz-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+  border-radius: 50% !important;
+  border: 5px solid white;
+}
+
+.profile-img {
   border-radius: 50% !important;
   border: 5px solid white;
 }
