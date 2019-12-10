@@ -26,8 +26,6 @@ const Spotify = new SpotifyWebApi({
 const OAUTH_SCOPES = ['user-read-private', 'user-read-email', 'user-top-read','user-read-recently-played',
           'user-library-read','user-follow-read','user-follow-modify'];
 
-
-
 var global_access_tok = '';
 var spotify_id = ''
 
@@ -48,8 +46,6 @@ var app = express();
 app.use(cors())
    .use(cookieParser());
 app.set('view engine', 'ejs');
-
-
 
 app.get('/matches', async function(req, res) {
 
@@ -73,32 +69,6 @@ app.get('/matches', async function(req, res) {
 		users.push(person);
 	}
 	
-//	db.collection('recenttracks').get()
-//		.then(snapshot => {
-//			snapshot.forEach(doc => {
-//				var rtrack = doc.data();
-//				//console.log(rtrack);
-//				recentTracks.push(rtrack);
-//			});
-//		})
-//		.catch(err => {
-//			console.error('Error getting documents',err);
-//			process.exit();
-//		})  
-//	
-//	db.collection('toptracks').get()
-//		.then(snapshot => {
-//			snapshot.forEach(doc => {
-//				var ttrack = doc.data();
-//				//console.log(ttrack);
-//				topTracks.push(ttrack);
-//			});
-//		})
-//		.catch(err => {
-//			console.error('Error getting documents',err);
-//			process.exit();
-//		})
-				
 	res.render('matches', {
 		users: users,
         access_token: global_access_tok,
