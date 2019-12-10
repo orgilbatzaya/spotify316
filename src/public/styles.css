@@ -81,7 +81,27 @@ body{
 	margin: 2px !important;
 }
 
-.profile-img {
+
+.profile {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+}
+.profile img {
+  min-width: 50%;
+  min-height: 50%;
+  width: auto;
+  height: 200px;
+  width: 200px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
   border-radius: 50% !important;
   border: 5px solid white;
 }
